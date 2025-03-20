@@ -1,0 +1,161 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Nova+Square&family=Syne+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Nova+Square&family=Syne+Mono&family=Zen+Dots&display=swap" rel="stylesheet">
+    <style>
+        /* Global Body Styles */
+        * {
+            margin: 0; /* Resetting default margin */
+            padding: 0;
+        }
+
+        body {
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px; /* Add padding to the body for general spacing */
+        }
+
+        /* Container Styles */
+        .container {
+            background-color: #1E1E1E;
+            border: 2px solid #C72C41;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            max-width: 350px; /* Limit max width for container */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            margin: 20px; /* Add margin to the container */
+        }
+
+        /* Border-Style Section */
+        .border-style {
+            border: 2px solid #C72C41;
+            background-color: #2A2A2A;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px; /* Add bottom margin for separation */
+        }
+
+        /* Note text styling */
+        .note {
+            color: #bb1010;
+            margin-top: 10px; /* Add margin top for separation */
+        }
+
+        /* Button Styles */
+        .button {
+            width: 30vw;
+            display: block;
+            background-color: #2A2A2A;
+            color: #EAEAEA;
+            border: 2px solid #C72C41;
+            padding: 12px;
+            font-size: 1.3em;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            margin-bottom: 10px; /* Add bottom margin between buttons */
+            text-decoration: none; /* Remove underline from links */
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Button Hover Effects */
+        .button:hover {
+            background-color: #C72C41;
+            color: #FFFFFF;
+        }
+
+        .button-neural:hover {
+            background-color: #8B0000;
+            color: #EAEAEA;
+        }
+
+        /* Header Styles */
+        h1 {
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            font-size: 2em;
+            margin-bottom: 20px; /* Add bottom margin for spacing */
+        }
+
+        /* Flex container for buttons */
+        .f_con {
+            display: inline-grid; /* Stack buttons vertically */
+           align-items: center;
+           width: 100%;
+            margin-top: 20px;
+            /* Add top margin to buttons section */
+            justify-content: center; 
+            font-size: 1.1em;     
+        }
+
+        /* Footer text styling */
+        .footer {
+            font-size: 0.8rem;
+            text-align: center;
+           
+            margin-top: 20px; /* Add top margin to footer */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h1 style="margin: 10px; font-size: 60px; font-family: Quantico;">AI-LLUSION: A Murder Mystery Experience</h1>
+            <div class="border-style">
+                <div class="text-sm font-bold mb-2 text-center" style="font-size: 2.5em; color: #bb1010; font-family: Quantico;">CONFIDENTIAL</div>
+                <p class="text-lg" style="font-size: 1.8em; font-family: nova square;">Welcome to AI-LLUSION. Select a case file to begin your investigation. Use your skills in digital forensics, interrogation, and deduction to solve complex mysteries.</p>
+                <p class="mt-4 text-lg;" style=" font-family: Quantico; font-size: 20px;">Remember: Nothing is ever as it seems. Trust no one. Question everything.</p>
+            </div>
+        </div>
+
+        <div class="f_con">
+            <button class="button" style="background-color: #7e0000;color: #f5f5f5; font-family: syne mono;">
+                <a href="NeuralNetworkConspiracy.html">The Neural Network Conspiracy</a>
+            </button>
+            <button class="button" style="background-color: #a48d1b; color: #f5f5f5; font-family: syne mono;">
+                <a href="MurderattheGala.html">Murder at the Gala</a>
+            </button>
+            <button class="button" style="background-color: #4A4A00; color: #f5f5f5; font-family: syne mono;">
+                <a href="BiotechBetrayal.html">Biotech Betrayl</a>
+            </button>
+            <button class="button" style="background-color: #1a0c6e; font-family: syne mono; color: #f5f5f5;">
+                <a href="CarnivalofShadows.html">Carnival of Shadows</a>
+            </button>
+            <button class="button" style="background-color: #800080; font-family: syne mono; color: #f5f5f5;">
+                <a href="HauntedMansion.html">Haunted Mansion</a>
+            </button>
+            <button class="button" style="background-color: #ff007f; font-family: syne mono; color: #f5f5f5;">
+                <a href="BetsandBetrayals.html">Bets and Betrayals</a>
+            <button class="button" style="background-color: #e28f24; font-family: syne mono; color: #f5f5f5;">
+                    <a href="LakesideLiesandDeadlyTies.html">Lakeside Lies and Deadly Ties</a>    
+            </button>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 AI-LLUSION | Access to additional case files pending security clearance</p>
+        </div>
+    </div>
+</body>
+</html>

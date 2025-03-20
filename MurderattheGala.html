@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murder at the Gala</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #2B2B2B; /* Dark Gray */
+            color: #FFD700; /* Gold */
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            overflow: auto;
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            letter-spacing: 2px;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #FFD700;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #8B4513; /* Saddle Brown */
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: #FFD700;
+            color: #8B4513;
+        }
+        button:disabled {
+            background-color: #000000;
+            color: #4d4d00;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #3B3B3B; /* Darker Gray */
+            padding: 30px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            background-color: #4B4B4B; /* Medium Gray */
+            color: #FFD700;
+            font-size: 16px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #FFDA44; /* Lighter Gold */
+        }
+        .inventory, .evidence, .analysis-results, .forensics {
+            background-color: #3B3B3B; /* Darker Gray */
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+        .inventory h3, .evidence h3, .analysis-results h3, .forensics h3 {
+            color: #FFD700;
+            margin: 0 0 10px;
+        }
+        .option-button {
+            display: block;
+            margin: 10px 0;
+        }
+        .evidence-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            background-color: #4B4B4B; /* Medium Gray */
+            transition: transform 0.2s;
+        }
+        .evidence-item:hover {
+            transform: scale(1.05);
+        }
+        .evidence-item img {
+            width: 100px; /* Increased size */
+            height: auto;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .evidence-item p {
+            margin: 0;
+            color: #FFD700;
+        }
+        .forensics-tools {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .forensics-tools button {
+            width: calc(33% - 10px);
+        }
+        .chat-entry {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            background-color: #4B4B4B; /* Medium Gray */
+        }
+        .interrogation-terminal {
+            background-color: #3B3B3B; /* Darker Gray */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-top: 20px;
+        }
+        .interrogation-terminal h3 {
+            color: #FFD700;
+            margin: 0 0 10px;
+        }
+        .interrogation-terminal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4B4B4B; /* Medium Gray */
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+        }
+        .interrogation-terminal button {
+            width: 100%;
+        }
+        .answers {
+            background-color: #3B3B3B; /* Darker Gray */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+            margin-top: 20px;
+        }
+        .answers h3 {
+            color: #FFD700;
+            margin: 0 0 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="renderDiv">
+        <h1>Murder at the Gala</h1>
+        <div id="timer">Timer: 0:00</div>
+        <div>
+            <button id="investigationTab">Investigation</button>
+            <button id="forensicsTab">Forensics Lab</button>
+        </div>
+        <div id="gameSection">
+            <div id="locationDescription"></div>
+            <div id="options"></div>
+            <div class="inventory" id="inventory"></div>
+            <div class="interrogation-terminal">
+                <h3>Interrogation Terminal</h3>
+                <select id="suspectSelect">
+                    <option value="">Select Suspect</option>
+                    <option value="Curator">Anjali Mehta (Curator)</option>
+                    <option value="Security Guard">Rajesh Kumar (Security Guard)</option>
+                    <option value="Art Dealer">Vikram Singh (Art Dealer)</option>
+                </select>
+                <select id="questionSelect" class="hidden">
+                    <option value="">Select Question</option>
+                </select>
+                <button id="askQuestionButton" class="hidden">Ask Question</button>
+            </div>
+            <div class="answers" id="answers">
+                <h3>Answers to Questions:</h3>
+                <div id="answersList"></div>
+            </div>
+            <button id="makeAccusationButton">Make Accusation</button>
+        </div>
+        <div id="forensicsSection" class="hidden">
+            <h3>Digital Forensics Laboratory</h3>
+            <p>Analyze your collected evidence using advanced AI tools. Select an item to begin analysis.</p>
+            <div id="evidenceSelection"></div>
+            <div class="forensics" id="forensics"></div>
+            <div class="analysis-results" id="analysisResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const realCulprit = "Vikram Singh"; // Art Dealer
+        let currentLocation = 'start';
+        let inventory = [];
+        let activeTab = 'game';
+        let selectedEvidence = null;
+        let analysisResults = {};
+        let showCulpritModal = false;
+        let selectedCulprit = null;
+        let culpritResult = null;
+        let answersList = [];
+        let askedQuestions = {};
+        let timerInterval;
+        let timeElapsed = 0;
+        let teamName = '';
+
+        // Prompt for team name
+        const showTeamNameModal = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Enter Team Name</h2>
+                    <input type="text" id="teamNameInput" placeholder="Team Name" />
+                    <button id="submitTeamNameButton">Submit</button>
+                </div>`;
+            document.body.appendChild(modal);
+
+            document.getElementById('submitTeamNameButton').onclick = () => {
+                teamName = document.getElementById('teamNameInput').value;
+                document.body.removeChild(modal);
+                startTimer(); // Start the timer after team name is submitted
+            };
+        };
+
+        const locations = {
+            start: {
+                description: "A murder has taken place at the Grand Museum during the annual gala. The suspects are in the museum, and you must gather evidence to find the murderer.",
+                options: [
+                    { text: "Investigate the Gallery", to: "gallery" },
+                    { text: "Check the Security Room", to: "security" },
+                    { text: "Interview the Curator", to: "curator" },
+                    { text: "Examine the Art Dealer's Booth", to: "dealer" }
+                ]
+            },
+            gallery: {
+                description: "The gallery is filled with guests, but the victim's body lies near the empty frame of a priceless painting. You notice a few suspicious footprints.",
+                clue: ["footprints", "broken_display"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            security: {
+                description: "The security room is filled with monitors showing various angles of the museum. One camera seems to have gone offline.",
+                clue: ["camera_feed", "security_logs"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            curator: {
+                description: "The curator is nervously pacing in her office, surrounded by art books and documents. She seems anxious about the murder.",
+                clue: ["curator_notes", "email_thread"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            dealer: {
+                description: "The art dealer's booth is cluttered with various artworks. He seems overly interested in the victim's last known whereabouts.",
+                clue: ["dealer_receipt", "suspicious_call"],
+                options: [{ text: "Go Back", to: "start" }]
+            }
+        };
+
+        const clues = {
+            footprints: {
+                description: "A set of muddy footprints leading away from the gallery.",
+                image: "https://placehold.co/400x300/8B4513/FFFFFF?text=Muddy+Footprints",
+                type: "physical",
+                isFake: false
+            },
+            broken_display: {
+                description: "A broken display case that once held a valuable artifact.",
+                image: "https://placehold.co/400x300/DAA520/FFFFFF?text=Broken+Display",
+                type: "physical",
+                isFake: false
+            },
+            camera_feed: {
+                description: "The camera feed shows a suspicious figure near the victim just before the murder.",
+                image: "https://placehold.co/400x300/4682B4/FFFFFF?text=Camera+Feed",
+                type: "digital",
+                isFake: false
+            },
+            security_logs: {
+                description: "Security logs indicate that the camera near the gallery was disabled for a short period.",
+                image: "https://placehold.co/400x300/708090/FFFFFF?text=Security+Logs",
+                type: "digital",
+                isFake: false
+            },
+            curator_notes: {
+                description: "Notes from the curator detailing the victim's history and recent threats.",
+                image: "https://placehold.co/400x300/8A2BE2/FFFFFF?text=Curator+Notes",
+                type: "document",
+                isFake: false
+            },
+            email_thread: {
+                description: "An email thread discussing the victim's recent dealings and potential enemies.",
+                image: "https://placehold.co/400x300/6A5ACD/FFFFFF?text=Email+Thread",
+                type: "digital",
+                isFake: false
+            },
+            dealer_receipt: {
+                description: "A receipt showing a large transaction from the art dealer to an unknown buyer.",
+                image: "https://placehold.co/400x300/FFD700/FFFFFF?text=Dealer+Receipt",
+                type: "document",
+                isFake: false
+            },
+            suspicious_call: {
+                description: "A note about a suspicious phone call made by the art dealer shortly after the murder.",
+                image: "https://placehold.co/400x300/FF6347/FFFFFF?text=Suspicious+Call",
+                type: "document",
+                isFake: false
+            }
+        };
+
+        const suspectQuestions = {
+            'Curator': [
+                "Where were you during the murder?",
+                "What can you tell us about the victim?",
+                "Did you notice anything unusual before the murder?",
+                "Who else had access to the gallery?",
+                "What was your relationship with the art dealer?",
+                "Can you explain these notes?"
+            ],
+            'Security Guard': [
+                "Where were you during the murder?",
+                "Did you see anyone suspicious?",
+                "What time did the camera go offline?",
+                "Who else was on duty that night?",
+                "Have there been any previous incidents?",
+                "Can you explain the security logs?"
+            ],
+            'Art Dealer': [
+                "Where were you during the murder?",
+                "What do you know about the victim?",
+                "Did you have any meetings that night?",
+                "Why were you so interested in the victim?",
+                "Can you explain this receipt?",
+                "Who were you on the phone with?"
+            ]
+        };
+
+        const suspectResponses = {
+            'Curator': {
+                "Where were you during the murder?": "I was in my office reviewing the exhibition layout. The security logs can confirm my whereabouts.",
+                "What can you tell us about the victim?": "The victim was a renowned art critic. I had disagreements with him over some of my exhibitions.",
+                "Did you notice anything unusual before the murder?": "I did see a few unfamiliar faces in the gallery earlier, but I thought they were just guests.",
+                "Who else had access to the gallery?": "Only authorized staff and security personnel had access. I can provide a list.",
+                "What was your relationship with the art dealer?": "He often tries to buy pieces from us, but I always refuse his offers.",
+                "Can you explain these notes?": "Those are just my thoughts on the exhibition. They have nothing to do with the murder."
+            },
+            'Security Guard': {
+                "Where were you during the murder?": "I was monitoring the cameras from the security room. I stepped out briefly to check on the gallery.",
+                "Did you see anyone suspicious?": "I noticed a man lingering near the victim, but I thought he was just admiring the art.",
+                "What time did the camera go offline?": "It went offline around 10:15 PM, just before the murder was reported.",
+                "Who else was on duty that night?": "Only one other guard was with me, but he was on break when the murder occurred.",
+                "Have there been any previous incidents?": "Not in recent years, but we had a few close calls during previous exhibitions.",
+                "Can you explain the security logs?": "They show that the camera was tampered with, but I can't explain how."
+            },
+            'Art Dealer': {
+                "Where were you during the murder?": "I was at my booth, talking to potential buyers. I have witnesses.",
+                "What do you know about the victim?": "He was a critic who often wrote negatively about my work. I had no love lost for him.",
+                "Did you have any meetings that night?": "Yes, I had several meetings with clients interested in other pieces.",
+                "Why were you so interested in the victim?": "He was a key figure in the art world. His opinion could make or break my career.",
+                "Can you explain this receipt?": "That's a standard transaction for a different piece. It has nothing to do with the murder.",
+                "Who were you on the phone with?": "Just a client. We were discussing a potential sale."
+            }
+        };
+
+        const renderLocation = () => {
+            const location = locations[currentLocation];
+            document.getElementById('locationDescription').innerText = location.description;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            location.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.innerText = option.text;
+                button.onclick = () => {
+                    currentLocation = option.to;
+                    collectClue(option.to);
+                    renderLocation();
+                };
+                optionsDiv.appendChild(button);
+            });
+        };
+
+        const collectClue = (location) => {
+            const locationClues = locations[location].clue;
+            if (locationClues) {
+                const newClues = locationClues.filter(clue => !inventory.includes(clue));
+                if (newClues.length > 0) {
+                    inventory.push(...newClues);
+                    renderInventory();
+                }
+            }
+        };
+
+        const renderInventory = () => {
+            const inventoryDiv = document.getElementById('inventory');
+            inventoryDiv.innerHTML = '<h3>Collected Clues:</h3>';
+            if (inventory.length === 0) {
+                inventoryDiv.innerHTML += '<p>No clues collected yet</p>';
+            } else {
+                const ul = document.createElement('ul');
+                inventory.forEach(clue => {
+                    const li = document.createElement('li');
+                    li.innerText = clues[clue].description;
+                    ul.appendChild(li);
+                });
+                inventoryDiv.appendChild(ul);
+            }
+        };
+
+        const renderChat = (question, response) => {
+            answersList.push(`<strong>Q:</strong> ${question}<br><strong>A:</strong> ${response}`);
+            renderAnswers();
+        };
+
+        const renderAnswers = () => {
+            const answersDiv = document.getElementById('answersList');
+            answersDiv.innerHTML = answersList.join('<br><br>');
+        };
+
+        const makeAccusation = () => {
+            if (inventory.length < 3) {
+                showAccusationWarning();
+            } else {
+                showCulpritModal = true;
+                renderCulpritModal();
+            }
+        };
+
+        const showAccusationWarning = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Warning</h2>
+                    <p>You need to collect more evidence before making an accusation.</p>
+                    <button onclick="closeAccusationWarning()">Close</button>
+                </div>`;
+            document.body.appendChild(modal);
+        };
+
+        const closeAccusationWarning = () => {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        const renderCulpritModal = () => {
+            if (showCulpritModal) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML =
+                    `<div class="modal-content">
+                        <h2>Select the Culprit</h2>
+                        <p>Based on your investigation, who do you believe is responsible for the murder?</p>
+                        <button onclick="selectCulprit('Anjali Mehta')">Anjali Mehta (Curator)</button>
+                        <button onclick="selectCulprit('Rajesh Kumar')">Rajesh Kumar (Security Guard)</button>
+                        <button onclick="selectCulprit('Vikram Singh')">Vikram Singh (Art Dealer)</button>
+                        <button onclick="closeCulpritModal()">Cancel</button>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+        };
+
+        const selectCulprit = (culprit) => {
+            selectedCulprit = culprit;
+            clearInterval(timerInterval); // Stop the timer when a suspect is selected
+            confirmAccusation();
+        };
+
+        const confirmAccusation = () => {
+            if (selectedCulprit) {
+                culpritResult = selectedCulprit === realCulprit ? 'correct' : 'wrong';
+                showCulpritModal = false;
+                renderCulpritResult();
+            }
+        };
+
+        const renderCulpritResult = () => {
+            const resultModal = document.createElement('div');
+            resultModal.className = 'modal';
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const timeTaken = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            resultModal.innerHTML =
+                `<div class="modal-content">
+                    <h2 class="${culpritResult === 'correct' ? 'correct' : 'wrong'}">${culpritResult === 'correct' ? '✓ Correct Identification!' : '✗ Wrong Culprit!'}</h2>
+                    <p>${culpritResult === 'correct' ? `Your deduction is correct! ${selectedCulprit} is indeed guilty of murder.` : `Your accusation is incorrect. The evidence suggests that ${selectedCulprit} is not the real culprit.`}</p>
+                    <p>Team Name: ${teamName}</p>
+                    <p>Time Taken: ${timeTaken}</p>
+                     <button onclick="window.location.href='index.html'">Back to Home</button>
+                </div>`;
+            document.body.appendChild(resultModal);
+        };
+
+        const closeCulpritModal = () => {
+            showCulpritModal = false;
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        // Timer functionality
+        const startTimer = () => {
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const minutes = Math.floor(timeElapsed / 60);
+                const seconds = timeElapsed % 60;
+                document.getElementById('timer').innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeElapsed >= 1800) { // Stop at 30 minutes
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        };
+
+        document.getElementById('makeAccusationButton').onclick = makeAccusation;
+
+        document.getElementById('investigationTab').onclick = () => {
+            activeTab = 'game';
+            document.getElementById('forensicsSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            renderLocation();
+        };
+
+        document.getElementById('forensicsTab').onclick = () => {
+            activeTab = 'forensics';
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('forensicsSection').classList.remove('hidden');
+            renderForensics();
+        };
+
+        const renderForensics = () => {
+            const evidenceSelection = document.getElementById('evidenceSelection');
+            evidenceSelection.innerHTML = '<h3>Evidence Collection:</h3>';
+            if (inventory.length === 0) {
+                evidenceSelection.innerHTML += '<p>No evidence collected yet. Return to Investigation to gather evidence.</p>';
+            } else {
+                inventory.forEach(clue => {
+                    const evidenceItem = document.createElement('div');
+                    evidenceItem.className = 'evidence-item';
+                    evidenceItem.innerHTML =
+                        `<img src="${clues[clue].image}" alt="${clue}">
+                        <p>${clues[clue].description}</p>`;
+                    evidenceItem.onclick = () => selectEvidence(clue);
+                    evidenceSelection.appendChild(evidenceItem);
+                });
+            }
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const selectEvidence = (evidenceKey) => {
+            selectedEvidence = clues[evidenceKey];
+            renderForensicTools();
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const renderForensicTools = () => {
+            const forensicsDiv = document.getElementById('forensics');
+            forensicsDiv.innerHTML =
+                `<h3>Selected Evidence: ${selectedEvidence.description}</h3>
+                <p>${selectedEvidence.description}</p>
+                <div class="forensics-tools">
+                    <button onclick="startAnalysis('Digital Forensics')">Digital Forensics</button>
+                    <button onclick="startAnalysis('Audio Enhancement')">Audio Enhancement</button>
+                    <button onclick="startAnalysis('Magnification')">Magnification</button>
+                    <button onclick="startAnalysis('UV Light')">UV Light</button>
+                </div>`;
+        };
+
+        const startAnalysis = (tool) => {
+            let result = '';
+            const isReal = selectedEvidence.isFake ? "This evidence is fake." : "This evidence is real.";
+            switch (tool) {
+                case 'Digital Forensics':
+                    if (selectedEvidence.type === 'digital') {
+                        result = selectedEvidence.isFake
+                            ? "Digital forensic analysis reveals inconsistencies: Creation timestamps appear manipulated. High probability this evidence was fabricated."
+                            : "Digital forensic analysis complete: Created at 23:42 from internal network. IP address traces to the curator's office.";
+                    } else {
+                        result = "No digital metadata available for this evidence type.";
+                    }
+                    break;
+                case 'Audio Enhancement':
+                    if (selectedEvidence.type === 'audio') {
+                        result = "Audio enhancement complete: Background noise reduced. Voice identified as male, attempting to disguise voice. Gallery ambiance audible in background.";
+                    } else {
+                        result = "This evidence type does not contain audio data that can be enhanced.";
+                    }
+                    break;
+                case 'Magnification':
+                    if (['document', 'physical'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "Magnification reveals evidence of manipulation: This evidence shows signs of tampering."
+                            : `Magnification reveals additional details: ${
+                                selectedEvidence.type === 'document'
+                                    ? 'Partial fingerprint detected on the corner.'
+                                    : 'Pattern analysis suggests the evidence was created approximately 48 hours ago.'
+                            }`;
+                    } else {
+                        result = "This evidence type cannot be magnified effectively.";
+                    }
+                    break;
+                case 'UV Light':
+                    if (['document', 'physical'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "UV light reveals invisible markings suggesting document forgery. The ink composition is inconsistent with museum standard documents."
+                            : "UV light reveals hidden fingerprints and residue not visible to the naked eye.";
+                    } else {
+                        result = "UV light analysis shows no significant findings for this evidence type.";
+                    }
+                    break;
+                default:
+                    result = "Analysis method not recognized.";
+            }
+            document.getElementById('analysisResults').innerHTML = `<h3>Analysis Result:</h3><p>${result}</p>`;
+        };
+
+        // Interrogation Logic
+        const suspectSelect = document.getElementById('suspectSelect');
+        const questionSelect = document.getElementById('questionSelect');
+        const askQuestionButton = document.getElementById('askQuestionButton');
+
+        suspectSelect.onchange = () => {
+            const selectedSuspect = suspectSelect.value;
+            renderQuestionDropdown(selectedSuspect);
+            answersList = []; // Clear answers when changing suspect
+            renderAnswers(); // Refresh answers display
+            if (!askedQuestions[selectedSuspect]) {
+                askedQuestions[selectedSuspect] = new Set(); // Initialize if not exists
+            }
+        };
+
+        const renderQuestionDropdown = (suspect) => {
+            questionSelect.innerHTML = '<option value="">Select Question</option>'; // Reset options
+            if (suspect) {
+                suspectQuestions[suspect].forEach(question => {
+                    const option = document.createElement('option');
+                    option.value = question;
+                    option.textContent = question;
+                    questionSelect.appendChild(option);
+                });
+                questionSelect.classList.remove('hidden');
+                askQuestionButton.classList.remove('hidden');
+            } else {
+                questionSelect.classList.add('hidden');
+                askQuestionButton.classList.add('hidden');
+            }
+        };
+
+        askQuestionButton.onclick = () => {
+            const selectedQuestion = questionSelect.value;
+            const selectedSuspect = suspectSelect.value;
+            if (selectedQuestion && selectedSuspect) {
+                const response = suspectResponses[selectedSuspect][selectedQuestion];
+                if (!askedQuestions[selectedSuspect].has(selectedQuestion)) { // Check if the question has already been asked
+                    renderChat(selectedQuestion, response);
+                    askedQuestions[selectedSuspect].add(selectedQuestion); // Mark question as asked
+                }
+            }
+        };
+
+        // Initialize the game and show the team name modal
+        showTeamNameModal();
+    </script>
+</body>
+</html>

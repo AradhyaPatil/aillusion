@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Neural Network Conspiracy</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #121212;
+            color: #ffcccc;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            overflow: auto;
+        }
+        h1 {
+            color: #ff4444;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            letter-spacing: 2px;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff4444;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #1a1a1a;
+            color: #ff4444;
+            border: 2px solid #ff4444;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: #ff4444;
+            color: #ffffff;
+        }
+        button:disabled {
+            background-color: #000000;
+            color: #4d0000;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #ff4444;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #ff4444;
+            border-radius: 5px;
+            background-color: #222;
+            color: #ff4444;
+            font-size: 16px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff8888;
+        }
+        .inventory, .evidence, .analysis-results, .forensics {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ff4444;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+        .inventory h3, .evidence h3, .analysis-results h3, .forensics h3 {
+            color: #ff4444;
+            margin: 0 0 10px;
+        }
+        .option-button {
+            display: block;
+            margin: 10px 0;
+        }
+        .evidence-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            background-color: #222;
+            transition: transform 0.2s;
+        }
+        .evidence-item:hover {
+            transform: scale(1.05);
+        }
+        .evidence-item img {
+            width: 100px; /* Increased size */
+            height: auto;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .evidence-item p {
+            margin: 0;
+            color: #ffcccc;
+        }
+        .forensics-tools {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .forensics-tools button {
+            width: calc(33% - 10px);
+        }
+        .chat-entry {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            background-color: #222;
+        }
+        .interrogation-terminal {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ff4444;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+        .interrogation-terminal h3 {
+            color: #ff4444;
+            margin: 0 0 10px;
+        }
+        .interrogation-terminal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #222;
+            color: #ff4444;
+            border: 2px solid #ff4444;
+            border-radius: 5px;
+        }
+        .interrogation-terminal button {
+            width: 100%;
+        }
+        .answers {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ff4444;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        .answers h3 {
+            color: #ff4444;
+            margin: 0 0 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="renderDiv">
+        <h1>The Neural Network Conspiracy</h1>
+        <div id="timer">Timer: 0:00</div>
+        <div>
+            <button id="investigationTab">Investigation</button>
+            <button id="forensicsTab">Forensics Lab</button>
+        </div>
+        <div id="gameSection">
+            <div id="locationDescription"></div>
+            <div id="options"></div>
+            <div class="inventory" id="inventory"></div>
+            <div class="interrogation-terminal">
+                <h3>Interrogation Terminal</h3>
+                <select id="suspectSelect">
+                    <option value="">Select Suspect</option>
+                    <option value="Dr. Kapoor">Dr. Kapoor</option>
+                    <option value="CFO Vikram">CFO Vikram</option>
+                    <option value="Security Chief">Security Chief</option>
+                </select>
+                <select id="questionSelect" class="hidden">
+                    <option value="">Select Question</option>
+                </select>
+                <button id="askQuestionButton" class="hidden">Ask Question</button>
+            </div>
+            <div class="answers" id="answers">
+                <h3>Answers to Questions:</h3>
+                <div id="answersList"></div>
+            </div>
+            <button id="makeAccusationButton">Make Accusation</button>
+        </div>
+        <div id="forensicsSection" class="hidden">
+            <h3>Digital Forensics Laboratory</h3>
+            <p>Analyze your collected evidence using advanced AI tools. Select an item to begin analysis.</p>
+            <div id="evidenceSelection"></div>
+            <div class="forensics" id="forensics"></div>
+            <div class="analysis-results" id="analysisResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const realCulprit = "CFO Vikram";
+        let currentLocation = 'start';
+        let inventory = [];
+        let activeTab = 'game';
+        let selectedEvidence = null;
+        let analysisResults = {};
+        let showCulpritModal = false;
+        let selectedCulprit = null;
+        let culpritResult = null;
+        let answersList = [];
+        let askedQuestions = {};
+        let timerInterval;
+        let timeElapsed = 0;
+        let teamName = '';
+
+        // Prompt for team name
+        const showTeamNameModal = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Enter Team Name</h2>
+                    <input type="text" id="teamNameInput" placeholder="Team Name" />
+                    <button id="submitTeamNameButton">Submit</button>
+                </div>`;
+            document.body.appendChild(modal);
+
+            document.getElementById('submitTeamNameButton').onclick = () => {
+                teamName = document.getElementById('teamNameInput').value;
+                document.body.removeChild(modal);
+                startTimer(); // Start the timer after team name is submitted
+            };
+        };
+
+        const locations = {
+            start: {
+                description: "A suspicious death has occurred at Neural Dynamics Lab. The victim is Dr. Rajiv Malhotra, found dead in the server room.",
+                options: [
+                    { text: "Investigate Server Room", to: "study" },
+                    { text: "Check Dr. Kapoor's Office", to: "office" },
+                    { text: "Search Financial Records", to: "finance" },
+                    { text: "Visit Security Room", to: "security" }
+                ]
+            },
+            study: {
+                description: "The secure server room is in disarray. Multiple hard drives are scattered, and the main terminal is still logged in.",
+                clue: ["whatsapp_chat", "email_thread", "voice_recording"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            office: {
+                description: "Dr. Kapoor's office contains several encrypted files and a hidden compartment behind his desk.",
+                clue: ["messenger_chat", "telegram_logs"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            finance: {
+                description: "The financial records room contains stacks of suspicious transaction logs and offshore account details.",
+                clue: ["bank_records", "news_article"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            security: {
+                description: "The security room contains multiple monitors and surveillance equipment. Several recordings seem to be corrupted.",
+                clue: ["voice_recording", "muddy_footprints"],
+                options: [{ text: "Go Back", to: "start" }]
+            }
+        };
+
+        const clues = {
+            bloodied_letter: {
+                description: "A letter with blood spots, revealing the victim knew his killer",
+                image: "https://placehold.co/400x300/FF4B4B/FFFFFF?text=Bloodied+Letter",
+                type: "document",
+                isFake: false
+            },
+            wet_knife: {
+                description: "A recently cleaned knife, possible murder weapon",
+                image: "https://placehold.co/400x300/9898FF/FFFFFF?text=Wet+Knife",
+                type: "weapon",
+                isFake: false
+            },
+            muddy_footprints: {
+                description: "Size 11 footprints matching the butler's shoes",
+                image: "https://placehold.co/400x300/A05050/FFFFFF?text=Muddy+Footprints",
+                type: "physical",
+                isFake: false
+            },
+            whatsapp_chat: {
+                description: "WhatsApp conversation about a suspicious transaction between Rajiv and 'Shadow'",
+                image: "https://placehold.co/400x300/4CE44C/FFFFFF?text=WhatsApp+Chat",
+                type: "digital",
+                isFake: false
+            },
+            messenger_chat: {
+                description: "A threatening Messenger chat about AI deepfakes",
+                image: "https://placehold.co/400x300/4A86FF/FFFFFF?text=Messenger+Chat",
+                type: "digital",
+                isFake: true
+            },
+            email_thread: {
+                description: "Mysterious email threatening Rajiv about AI research",
+                image: "https://placehold.co/400x300/54C7C7/FFFFFF?text=Email+Thread",
+                type: "digital",
+                isFake: false
+            },
+            telegram_logs: {
+                description: "Suspicious Telegram conversation about hacked AI access",
+                image: "https://placehold.co/400x300/0088CC/FFFFFF?text=Telegram+Logs",
+                type: "digital",
+                isFake: true
+            },
+            bank_records: {
+                description: "Suspicious bank transactions to Shadow Corp Ltd",
+                image: "https://placehold.co/400x300/76B976/FFFFFF?text=Bank+Records",
+                type: "document",
+                isFake: false
+            },
+            news_article: {
+                description: "TechWire News article about AI data tampering",
+                image: "https://placehold.co/400x300/BA7CBE/FFFFFF?text=News+Article",
+                type: "document",
+                isFake: true
+            },
+            voice_recording: {
+                description: "Recording of someone in the server room at midnight",
+                image: "https://placehold.co/400x300/555555/FFFFFF?text=Voice+Recording",
+                type: "audio",
+                isFake: false
+            }
+        };
+
+        const suspectQuestions = {
+            'Dr. Kapoor': [
+                "Where were you at midnight?",
+                "What was your relationship with Dr. Malhotra?",
+                "Do you know about the Shadow Corp transactions?",
+                "Why did you disagree about AI ethics?",
+                "What was the last conversation you had with Dr. Malhotra?",
+                "Can you explain the AI model anomalies?"
+            ],
+            'CFO Vikram': [
+                "Where were you at midnight?",
+                "What was your relationship with Dr. Malhotra?",
+                "Do you know about the Shadow Corp transactions?",
+                "Why were there unauthorized fund transfers?",
+                "What did Dr. Malhotra discover in the financial records?",
+                "Can you explain these offshore accounts?"
+            ],
+            'Security Chief': [
+                "Where were you at midnight?",
+                "What was your relationship with Dr. Malhotra?",
+                "Do you know about the Shadow Corp transactions?",
+                "Why were the security cameras corrupted?",
+                "Who else had access to the server room?",
+                "What suspicious activities did Dr. Malhotra report?"
+            ]
+        };
+
+        const suspectResponses = {
+            'Dr. Kapoor': {
+                "Where were you at midnight?": "I was in my lab working on the AI model optimization. The security logs can confirm this.",
+                "What was your relationship with Dr. Malhotra?": "We were research partners, but lately we had disagreements about the ethical implications of our AI work.",
+                "Do you know about the Shadow Corp transactions?": "I've heard rumors, but I wasn't involved in the financial aspects of our projects.",
+                "Why did you disagree about AI ethics?": "Dr. Malhotra wanted to implement stronger ethical constraints on the AI system. I thought it would limit our research potential.",
+                "What was the last conversation you had with Dr. Malhotra?": "He was agitated about something he found in the system logs. Said he needed to speak with the CFO urgently.",
+                "Can you explain the AI model anomalies?": "Someone had modified the AI's decision-making parameters. I discovered this after Dr. Malhotra's death."
+            },
+            'CFO Vikram': {
+                "Where were you at midnight?": "I was reviewing financial documents in my office until 11:30 PM, then left for home.",
+                "What was your relationship with Dr. Malhotra?": "Purely professional. He questioned some of our recent transactions, though.",
+                "Do you know about the Shadow Corp transactions?": "Those were legitimate business dealings. I can provide all the documentation.",
+                "Why were there unauthorized fund transfers?": "Those were part of a restructuring process that I can explain further.",
+                "What did Dr. Malhotra discover in the financial records?": "He was concerned about some discrepancies, but they were all cleared up.",
+                "Can you explain these offshore accounts?": "They are part of our international operations, nothing illegal."
+            },
+            'Security Chief': {
+                "Where were you at midnight?": "I was monitoring the security feeds. Something corrupted them around 11:45 PM.",
+                "What was your relationship with Dr. Malhotra?": "He recently reported suspicious activities in the lab. I was investigating.",
+                "Do you know about the Shadow Corp transactions?": "Not my department, but I noticed unusual access patterns during those transfers.",
+                "Why were the security cameras corrupted?": "There was a power surge that affected the system, we're working on restoring the footage.",
+                "Who else had access to the server room?": "Only authorized personnel, including myself and the lab technicians.",
+                "What suspicious activities did Dr. Malhotra report?": "He mentioned unauthorized access attempts to the server."
+            }
+        };
+
+        const renderLocation = () => {
+            const location = locations[currentLocation];
+            document.getElementById('locationDescription').innerText = location.description;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            location.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.innerText = option.text;
+                button.onclick = () => {
+                    currentLocation = option.to;
+                    collectClue(option.to);
+                    renderLocation();
+                };
+                optionsDiv.appendChild(button);
+            });
+        };
+
+        const collectClue = (location) => {
+            const locationClues = locations[location].clue;
+            if (locationClues) {
+                const newClues = locationClues.filter(clue => !inventory.includes(clue));
+                if (newClues.length > 0) {
+                    inventory.push(...newClues);
+                    renderInventory();
+                }
+            }
+        };
+
+        const renderInventory = () => {
+            const inventoryDiv = document.getElementById('inventory');
+            inventoryDiv.innerHTML = '<h3>Collected Clues:</h3>';
+            if (inventory.length === 0) {
+                inventoryDiv.innerHTML += '<p>No clues collected yet</p>';
+            } else {
+                const ul = document.createElement('ul');
+                inventory.forEach(clue => {
+                    const li = document.createElement('li');
+                    li.innerText = clues[clue].description;
+                    ul.appendChild(li);
+                });
+                inventoryDiv.appendChild(ul);
+            }
+        };
+
+        const renderChat = (question, response) => {
+            answersList.push(`<strong>Q:</strong> ${question}<br><strong>A:</strong> ${response}`);
+            renderAnswers();
+        };
+
+        const renderAnswers = () => {
+            const answersDiv = document.getElementById('answersList');
+            answersDiv.innerHTML = answersList.join('<br><br>');
+        };
+
+        const makeAccusation = () => {
+            if (inventory.length < 3) {
+                showAccusationWarning();
+            } else {
+                showCulpritModal = true;
+                renderCulpritModal();
+                // Do not stop the timer here
+            }
+        };
+
+        const showAccusationWarning = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Warning</h2>
+                    <p>You need to collect more evidence before making an accusation.</p>
+                    <button onclick="closeAccusationWarning()">Close</button>
+                </div>`;
+            document.body.appendChild(modal);
+        };
+
+        const closeAccusationWarning = () => {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        const renderCulpritModal = () => {
+            if (showCulpritModal) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML =
+                    `<div class="modal-content">
+                        <h2>Select the Culprit</h2>
+                        <p>Based on your investigation, who do you believe is responsible for Dr. Rajiv Malhotra's death?</p>
+                        <button onclick="selectCulprit('Dr. Kapoor')">Dr. Kapoor</button>
+                        <button onclick="selectCulprit('CFO Vikram')">CFO Vikram</button>
+                        <button onclick="selectCulprit('Security Chief')">Security Chief</button>
+                        <button onclick="closeCulpritModal()">Cancel</button>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+        };
+
+        const selectCulprit = (culprit) => {
+            selectedCulprit = culprit;
+            clearInterval(timerInterval); // Stop the timer when a suspect is selected
+            confirmAccusation();
+        };
+
+        const confirmAccusation = () => {
+            if (selectedCulprit) {
+                culpritResult = selectedCulprit === realCulprit ? 'correct' : 'wrong';
+                showCulpritModal = false;
+                renderCulpritResult();
+            }
+        };
+
+        const renderCulpritResult = () => {
+            const resultModal = document.createElement('div');
+            resultModal.className = 'modal';
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const timeTaken = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            resultModal.innerHTML =
+                `<div class="modal-content">
+                    <h2 class="${culpritResult === 'correct' ? 'correct' : 'wrong'}">${culpritResult === 'correct' ? '✓ Correct Identification!' : '✗ Wrong Culprit!'}</h2>
+                    <p>${culpritResult === 'correct' ? `Your deduction is correct! ${selectedCulprit} is indeed guilty of Dr. Malhotra's murder.` : `Your accusation is incorrect. The evidence suggests that ${selectedCulprit} is not the real culprit. Further investigation points to ${realCulprit} as the true perpetrator.`}</p>
+                    <p>Team Name: ${teamName}</p>
+                    <p>Time Taken: ${timeTaken}</p>
+                    <button onclick="window.location.href='index.html'">Back to Home</button>
+                </div>`;
+            document.body.appendChild(resultModal);
+        };
+
+        const closeCulpritModal = () => {
+            showCulpritModal = false;
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        // Timer functionality
+        const startTimer = () => {
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const minutes = Math.floor(timeElapsed / 60);
+                const seconds = timeElapsed % 60;
+                document.getElementById('timer').innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeElapsed >= 1800) { // Stop at 30 minutes
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        };
+
+        document.getElementById('makeAccusationButton').onclick = makeAccusation;
+
+        document.getElementById('investigationTab').onclick = () => {
+            activeTab = 'game';
+            document.getElementById('forensicsSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            renderLocation();
+        };
+
+        document.getElementById('forensicsTab').onclick = () => {
+            activeTab = 'forensics';
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('forensicsSection').classList.remove('hidden');
+            renderForensics();
+        };
+
+        const renderForensics = () => {
+            const evidenceSelection = document.getElementById('evidenceSelection');
+            evidenceSelection.innerHTML = '<h3>Evidence Collection:</h3>';
+            if (inventory.length === 0) {
+                evidenceSelection.innerHTML += '<p>No evidence collected yet. Return to Investigation to gather evidence.</p>';
+            } else {
+                inventory.forEach(clue => {
+                    const evidenceItem = document.createElement('div');
+                    evidenceItem.className = 'evidence-item';
+                    evidenceItem.innerHTML =
+                        `<img src="${clues[clue].image}" alt="${clue}">
+                        <p>${clues[clue].description}</p>`;
+                    evidenceItem.onclick = () => selectEvidence(clue);
+                    evidenceSelection.appendChild(evidenceItem);
+                });
+            }
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const selectEvidence = (evidenceKey) => {
+            selectedEvidence = clues[evidenceKey];
+            renderForensicTools();
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const renderForensicTools = () => {
+            const forensicsDiv = document.getElementById('forensics');
+            forensicsDiv.innerHTML =
+                `<h3>Selected Evidence: ${selectedEvidence.description}</h3>
+                <p>${selectedEvidence.description}</p>
+                <div class="forensics-tools">
+                    <button onclick="startAnalysis('Digital Forensics')">Digital Forensics</button>
+                    <button onclick="startAnalysis('Audio Enhancement')">Audio Enhancement</button>
+                    <button onclick="startAnalysis('Magnification')">Magnification</button>
+                    <button onclick="startAnalysis('UV Light')">UV Light</button>
+                </div>`;
+        };
+
+        const startAnalysis = (tool) => {
+            let result = '';
+            const isReal = selectedEvidence.isFake ? "This evidence is fake." : "This evidence is real.";
+            switch (tool) {
+                case 'Digital Forensics':
+                    if (selectedEvidence.type === 'digital') {
+                        result = selectedEvidence.isFake
+                            ? "Digital forensic analysis reveals inconsistencies: Creation timestamps appear manipulated. High probability this evidence was fabricated."
+                            : "Digital forensic analysis complete: Created at 23:42 from internal network. IP address traces to CFO department.";
+                    } else {
+                        result = "No digital metadata available for this evidence type.";
+                    }
+                    break;
+                case 'Audio Enhancement':
+                    if (selectedEvidence.type === 'audio') {
+                        result = "Audio enhancement complete: Background noise reduced. Voice identified as male, attempting to disguise voice. Server cooling systems audible in background.";
+                    } else {
+                        result = "This evidence type does not contain audio data that can be enhanced.";
+                    }
+                    break;
+                case 'Magnification':
+                    if (['document', 'physical', 'weapon'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "Magnification reveals evidence of manipulation: This evidence shows signs of tampering."
+                            : `Magnification reveals additional details: ${
+                                selectedEvidence.type === 'document'
+                                    ? 'Partial fingerprint detected on the corner.'
+                                    : selectedEvidence.type === 'weapon'
+                                        ? 'Trace blood elements detected despite cleaning attempt.'
+                                        : 'Pattern analysis suggests the evidence was created approximately 48 hours ago.'
+                            }`;
+                    } else {
+                        result = "This evidence type cannot be magnified effectively.";
+                    }
+                    break;
+                case 'UV Light':
+                    if (['document', 'physical'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "UV light reveals invisible markings suggesting document forgery. The ink composition is inconsistent with company standard documents."
+                            : "UV light reveals hidden blood traces and fingerprint residue not visible to the naked eye.";
+                    } else if (selectedEvidence.type === 'weapon') {
+                        result = "UV light reveals blood residue that wasn't completely cleaned off. Suggests recent use.";
+                    } else {
+                        result = "UV light analysis shows no significant findings for this evidence type.";
+                    }
+                    break;
+                default:
+                    result = "Analysis method not recognized.";
+            }
+            document.getElementById('analysisResults').innerHTML = `<h3>Analysis Result:</h3><p>${result}</p>`;
+        };
+
+        // Interrogation Logic
+        const suspectSelect = document.getElementById('suspectSelect');
+        const questionSelect = document.getElementById('questionSelect');
+        const askQuestionButton = document.getElementById('askQuestionButton');
+
+        suspectSelect.onchange = () => {
+            const selectedSuspect = suspectSelect.value;
+            renderQuestionDropdown(selectedSuspect);
+            answersList = []; // Clear answers when changing suspect
+            renderAnswers(); // Refresh answers display
+            if (!askedQuestions[selectedSuspect]) {
+                askedQuestions[selectedSuspect] = new Set(); // Initialize if not exists
+            }
+        };
+
+        const renderQuestionDropdown = (suspect) => {
+            questionSelect.innerHTML = '<option value="">Select Question</option>'; // Reset options
+            if (suspect) {
+                suspectQuestions[suspect].forEach(question => {
+                    const option = document.createElement('option');
+                    option.value = question;
+                    option.textContent = question;
+                    questionSelect.appendChild(option);
+                });
+                questionSelect.classList.remove('hidden');
+                askQuestionButton.classList.remove('hidden');
+            } else {
+                questionSelect.classList.add('hidden');
+                askQuestionButton.classList.add('hidden');
+            }
+        };
+
+        askQuestionButton.onclick = () => {
+            const selectedQuestion = questionSelect.value;
+            const selectedSuspect = suspectSelect.value;
+            if (selectedQuestion && selectedSuspect) {
+                const response = suspectResponses[selectedSuspect][selectedQuestion];
+                if (!askedQuestions[selectedSuspect].has(selectedQuestion)) { // Check if the question has already been asked
+                    renderChat(selectedQuestion, response);
+                    askedQuestions[selectedSuspect].add(selectedQuestion); // Mark question as asked
+                }
+            }
+        };
+
+        // Initialize the game and show the team name modal
+        showTeamNameModal();
+    </script>
+</body>
+</html>

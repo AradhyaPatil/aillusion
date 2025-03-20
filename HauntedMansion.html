@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Haunted Mansion Mystery</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1A0F2A; /* Very Dark Purple */
+            color: #EAEAEA; /* Ghostly White */
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); /* White shadow */
+            overflow: auto;
+            background-image: url('https://example.com/haunted-mansion-background.jpg'); /* Add a spooky background image */
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        h1 {
+            font-family: 'Courier New', monospace; /* Spooky font */
+            color: #EAEAEA; /* Ghostly White */
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            letter-spacing: 2px;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #EAEAEA; /* Ghostly White */
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4B2C6D; /* Darker Purple */
+            color: #EAEAEA; /* Ghostly White */
+            border: 2px solid #EAEAEA; /* Ghostly White */
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: #B22222; /* Blood Red */
+            color: #EAEAEA; /* Ghostly White */
+        }
+        button:disabled {
+            background-color: #000000;
+            color: #4d0000;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #4B2C6D; /* Darker Purple */
+            padding: 30px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #EAEAEA; /* Ghostly White */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); /* White shadow */
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #EAEAEA; /* Ghostly White */
+            border-radius: 5px;
+            background-color: #4B2C6D; /* Darker Purple */
+            color: #EAEAEA; /* Ghostly White */
+            font-size: 16px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff8888;
+        }
+        .inventory, .evidence, .analysis-results, .forensics {
+            background-color: #4B2C6D; /* Darker Purple */
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #EAEAEA; /* Ghostly White */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* White shadow */
+        }
+        .inventory h3, .evidence h3, .analysis-results h3, .forensics h3 {
+            color: #EAEAEA; /* Ghostly White */
+            margin: 0 0 10px;
+        }
+        .option-button {
+            display: block;
+            margin: 10px 0;
+        }
+        .evidence-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #EAEAEA; /* Ghostly White */
+            border-radius: 5px;
+            background-color: #4B2C6D; /* Darker Purple */
+            transition: transform 0.2s;
+        }
+        .evidence-item:hover {
+            transform: scale(1.05);
+        }
+        .evidence-item img {
+            width: 100px; /* Increased size */
+            height: auto;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .evidence-item p {
+            margin: 0;
+            color: #EAEAEA; /* Ghostly White */
+        }
+        .forensics-tools {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .forensics-tools button {
+            width: calc(33% - 10px);
+        }
+        .chat-entry {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #EAEAEA; /* Ghostly White */
+            border-radius: 5px;
+            background-color: #4B2C6D; /* Darker Purple */
+        }
+        .interrogation-terminal {
+            background-color: #4B2C6D; /* Darker Purple */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #EAEAEA; /* Ghostly White */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* White shadow */
+            margin-top: 20px;
+        }
+        .interrogation-terminal h3 {
+            color: #EAEAEA; /* Ghostly White */
+            margin: 0 0 10px;
+        }
+        .interrogation-terminal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4B2C6D; /* Darker Purple */
+            color: #EAEAEA; /* Ghostly White */
+            border: 2px solid #EAEAEA; /* Ghostly White */
+            border-radius: 5px;
+        }
+        .interrogation-terminal button {
+            width: 100%;
+        }
+        .answers {
+            background-color: #4B2C6D; /* Darker Purple */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #EAEAEA; /* Ghostly White */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* White shadow */
+            margin-top: 20px;
+        }
+        .answers h3 {
+            color: #EAEAEA; /* Ghostly White */
+            margin: 0 0 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="renderDiv">
+        <h1>The Haunted Mansion Mystery</h1>
+        <div id="timer">Timer: 0:00</div>
+        <div>
+            <button id="investigationTab">Investigation</button>
+            <button id="forensicsTab">Forensics Lab</button>
+        </div>
+        <div id="gameSection">
+            <div id="locationDescription"></div>
+            <div id="options"></div>
+            <div class="inventory" id="inventory"></div>
+            <div class="interrogation-terminal">
+                <h3>Interrogation Terminal</h3>
+                <select id="suspectSelect">
+                    <option value="">Select Suspect</option>
+                    <option value="The Caretaker">The Caretaker</option>
+                    <option value="Arjun Singh">Arjun Singh</option> <!-- Changed name -->
+                    <option value="Priya Sharma">Priya Sharma</option> <!-- Changed name -->
+                </select>
+                <select id="questionSelect" class="hidden">
+                    <option value="">Select Question</option>
+                </select>
+                <button id="askQuestionButton" class="hidden">Ask Question</button>
+            </div>
+            <div class="answers" id="answers">
+                <h3>Answers to Questions:</h3>
+                <div id="answersList"></div>
+            </div>
+            <button id="makeAccusationButton">Make Accusation</button>
+        </div>
+        <div id="forensicsSection" class="hidden">
+            <h3>Digital Forensics Laboratory</h3>
+            <p>Analyze your collected evidence using advanced AI tools. Select an item to begin analysis.</p>
+            <div id="evidenceSelection"></div>
+            <div class="forensics" id="forensics"></div>
+            <div class="analysis-results" id="analysisResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const realCulprit = "Arjun Singh"; // Updated culprit
+        let currentLocation = 'start';
+        let inventory = [];
+        let activeTab = 'game';
+        let selectedEvidence = null;
+        let analysisResults = {};
+        let showCulpritModal = false;
+        let selectedCulprit = null;
+        let culpritResult = null;
+        let answersList = [];
+        let askedQuestions = {};
+        let timerInterval;
+        let timeElapsed = 0;
+        let teamName = '';
+
+        // Prompt for team name
+        const showTeamNameModal = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Enter Team Name</h2>
+                    <input type="text" id="teamNameInput" placeholder="Team Name" />
+                    <button id="submitTeamNameButton">Submit</button>
+                </div>`;
+            document.body.appendChild(modal);
+
+            document.getElementById('submitTeamNameButton').onclick = () => {
+                teamName = document.getElementById('teamNameInput').value;
+                document.body.removeChild(modal);
+                startTimer(); // Start the timer after team name is submitted
+            };
+        };
+
+        const locations = {
+            start: {
+                description: "A murder has occurred in the haunted mansion. The victim is Lord Blackwood, found dead in the library.",
+                options: [
+                    { text: "Investigate the Library", to: "library" },
+                    { text: "Check the Garden", to: "garden" },
+                    { text: "Search the Attic", to: "attic" },
+                    { text: "Visit the Cellar", to: "cellar" }
+                ]
+            },
+            library: {
+                description: "The library is dimly lit, with books scattered everywhere. A strange portrait hangs on the wall.",
+                clue: ["creepy_portrait", "mysterious_diary", "blood_stained_handkerchief"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            garden: {
+                description: "The garden is overgrown, with weeds and shadows lurking. You notice ghostly footprints in the dirt.",
+                clue: ["ghostly_footprints", "cursed_amulet"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            attic: {
+                description: "The attic is filled with old furniture and dust. A broken mirror lies on the floor.",
+                clue: ["broken_mirror", "phantom_photograph", "ancient_spellbook"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            cellar: {
+                description: "The cellar is dark and damp. You find an old key hidden in a corner.",
+                clue: ["old_key", "secret_passage_map"],
+                options: [{ text: "Go Back", to: "start" }]
+            }
+        };
+
+        const clues = {
+            creepy_portrait: {
+                description: "A painting that seems to follow you with its eyes.",
+                image: "https://placehold.co/400x300/4B8B3B/FFFFFF?text=Creepy+Portrait",
+                type: "document",
+                isFake: false
+            },
+            mysterious_diary: {
+                description: "A diary filled with strange entries about the mansion's past.",
+                image: "https://placehold.co/400x300/1E90FF/FFFFFF?text=Mysterious+Diary", // Dark Blue
+                type: "document",
+                isFake: false
+            },
+            blood_stained_handkerchief: {
+                description: "A handkerchief with a mysterious bloodstain.",
+                image: "https://placehold.co/400x300/B22222/FFFFFF?text=Blood-Stained+Handkerchief", // Dark Red
+                type: "document",
+                isFake: false
+            },
+            ghostly_footprints: {
+                description: "Footprints that appear and disappear in the dust.",
+                image: "https://placehold.co/400x300/696969/FFFFFF?text=Ghostly+Footprints", // Dark Gray
+                type: "physical",
+                isFake: false
+            },
+            cursed_amulet: {
+                description: "An amulet said to bring misfortune to its holder.",
+                image: "https://placehold.co/400x300/FF8C00/FFFFFF?text=Cursed+Amulet", // Dark Orange
+                type: "physical",
+                isFake: false
+            },
+            broken_mirror: {
+                description: "A shattered mirror with a hidden message behind it.",
+                image: "https://placehold.co/400x300/00CED1/FFFFFF?text=Broken+Mirror", // Dark Cyan
+                type: "physical",
+                isFake: false
+            },
+            phantom_photograph: {
+                description: "A photograph that reveals ghostly figures when viewed.",
+                image: "https://placehold.co/400x300/8A2BE2/FFFFFF?text=Phantom+Photograph", // Dark Magenta
+                type: "document",
+                isFake: false
+            },
+            ancient_spellbook: {
+                description: "A book containing spells and incantations related to the supernatural.",
+                image: "https://placehold.co/400x300/FFD700/FFFFFF?text=Ancient+Spellbook", // Dark Yellow
+                type: "document",
+                isFake: false
+            },
+            old_key: {
+                description: "A rusty key that might unlock a hidden room.",
+                image: "https://placehold.co/400x300/8B4513/FFFFFF?text=Old+Key", // Dark Brown
+                type: "physical",
+                isFake: false
+            },
+            secret_passage_map: {
+                description: "A map showing hidden passages within the mansion.",
+                image: "https://placehold.co/400x300/4B0082/FFFFFF?text=Secret+Passage+Map", // Dark Purple
+                type: "document",
+                isFake: false
+            }
+        };
+
+        const suspectQuestions = {
+            'The Caretaker': [
+                "What do you know about the history of this mansion?",
+                "Did you see anyone suspicious last night?",
+                "What do you think happened to Lord Blackwood?",
+                "Have you noticed anything strange recently?",
+                "What can you tell me about the ghost stories?"
+            ],
+            'Arjun Singh': [ // Updated name
+                "Why did you return to the mansion after all these years?",
+                "What do you know about the ghost stories?",
+                "Did you have a conflict with Lord Blackwood?",
+                "What do you think about the caretaker?",
+                "Have you seen anything unusual in the mansion?"
+            ],
+            'Priya Sharma': [ // Updated name
+                "What brought you to this mansion?",
+                "Have you found any evidence of the supernatural?",
+                "What do you think about the ghost stories?",
+                "Did you see anyone else here last night?",
+                "What do you know about Lord Blackwood?"
+            ]
+        };
+
+        const suspectResponses = {
+            'The Caretaker': {
+                "What do you know about the history of this mansion?": "I’ve been taking care of this place for decades. There are secrets hidden in every corner.",
+                "Did you see anyone suspicious last night?": "I heard whispers, but I thought it was just the wind.",
+                "What do you think happened to Lord Blackwood?": "He was a good man, but the mansion has a way of driving people mad.",
+                "Have you noticed anything strange recently?": "The portraits seem to change positions at night. It's unsettling.",
+                "What can you tell me about the ghost stories?": "They say the spirits of the family haunt this place, seeking justice."
+            },
+            'Arjun Singh': {
+                "Why did you return to the mansion after all these years?": "I wanted to reclaim my family's legacy, but I fear something dark lurks here.",
+                "What do you know about the ghost stories?": "They say the spirits of my ancestors haunt this place, seeking justice.",
+                "Did you have a conflict with Lord Blackwood?": "We disagreed on the future of the estate. He wanted to sell it.",
+                "What do you think about the caretaker?": "He knows more than he lets on. I don't trust him.",
+                "Have you seen anything unusual in the mansion?": "I’ve seen shadows moving in the corners of my eyes."
+            },
+            'Priya Sharma': {
+                "What brought you to this mansion?": "I’m here to document the paranormal activity. I believe the spirits have a story to tell.",
+                "Have you found any evidence of the supernatural?": "Yes, I’ve captured strange sounds and shadows on my equipment.",
+                "What do you think about the ghost stories?": "I believe there’s truth to them. This place is charged with energy.",
+                "Did you see anyone else here last night?": "I thought I saw someone in the garden, but it was too dark to tell.",
+                "What do you know about Lord Blackwood?": "He was known for his eccentric behavior and obsession with the occult."
+            }
+        };
+
+        const renderLocation = () => {
+            const location = locations[currentLocation];
+            document.getElementById('locationDescription').innerText = location.description;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            location.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.innerText = option.text;
+                button.onclick = () => {
+                    currentLocation = option.to;
+                    collectClue(option.to);
+                    renderLocation();
+                };
+                optionsDiv.appendChild(button);
+            });
+        };
+
+        const collectClue = (location) => {
+            const locationClues = locations[location].clue;
+            if (locationClues) {
+                const newClues = locationClues.filter(clue => !inventory.includes(clue));
+                if (newClues.length > 0) {
+                    inventory.push(...newClues);
+                    renderInventory();
+                }
+            }
+        };
+
+        const renderInventory = () => {
+            const inventoryDiv = document.getElementById('inventory');
+            inventoryDiv.innerHTML = '<h3>Collected Clues:</h3>';
+            if (inventory.length === 0) {
+                inventoryDiv.innerHTML += '<p>No clues collected yet</p>';
+            } else {
+                const ul = document.createElement('ul');
+                inventory.forEach(clue => {
+                    const li = document.createElement('li');
+                    li.innerText = clues[clue].description;
+                    ul.appendChild(li);
+                });
+                inventoryDiv.appendChild(ul);
+            }
+        };
+
+        const renderChat = (question, response) => {
+            answersList.push(`<strong>Q:</strong> ${question}<br><strong>A:</strong> ${response}`);
+            renderAnswers();
+        };
+
+        const renderAnswers = () => {
+            const answersDiv = document.getElementById('answersList');
+            answersDiv.innerHTML = answersList.join('<br><br>');
+        };
+
+        const makeAccusation = () => {
+            if (inventory.length < 3) {
+                showAccusationWarning();
+            } else {
+                showCulpritModal = true;
+                renderCulpritModal();
+            }
+        };
+
+        const showAccusationWarning = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Warning</h2>
+                    <p>You need to collect more evidence before making an accusation.</p>
+                    <button onclick="closeAccusationWarning()">Close</button>
+                </div>`;
+            document.body.appendChild(modal);
+        };
+
+        const closeAccusationWarning = () => {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        const renderCulpritModal = () => {
+            if (showCulpritModal) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML =
+                    `<div class="modal-content">
+                        <h2>Select the Culprit</h2>
+                        <p>Based on your investigation, who do you believe is responsible for Lord Blackwood's death?</p>
+                        <button onclick="selectCulprit('The Caretaker')">The Caretaker</button>
+                        <button onclick="selectCulprit('Arjun Singh')">Arjun Singh</button> <!-- Updated name -->
+                        <button onclick="selectCulprit('Priya Sharma')">Priya Sharma</button> <!-- Updated name -->
+                        <button onclick="closeCulpritModal()">Cancel</button>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+        };
+
+        const selectCulprit = (culprit) => {
+            selectedCulprit = culprit;
+            clearInterval(timerInterval); // Stop the timer when a suspect is selected
+            confirmAccusation();
+        };
+
+        const confirmAccusation = () => {
+            if (selectedCulprit) {
+                culpritResult = selectedCulprit === realCulprit ? 'correct' : 'wrong';
+                showCulpritModal = false;
+                renderCulpritResult();
+            }
+        };
+
+        const renderCulpritResult = () => {
+            const resultModal = document.createElement('div');
+            resultModal.className = 'modal';
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const timeTaken = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            resultModal.innerHTML =
+                `<div class="modal-content">
+                    <h2 class="${culpritResult === 'correct' ? 'correct' : 'wrong'}">${culpritResult === 'correct' ? '✓ Correct Identification!' : '✗ Wrong Culprit!'}</h2>
+                    <p>${culpritResult === 'correct' ? `Your deduction is correct! ${selectedCulprit} is indeed guilty of Lord Blackwood's murder.` : `Your accusation is incorrect. The evidence suggests that ${selectedCulprit} is not the real culprit.`}</p>
+                    <p>Team Name: ${teamName}</p>
+                    <p>Time Taken: ${timeTaken}</p>
+                     <button onclick="window.location.href='index.html'">Back to Home</button>
+                </div>`;
+            document.body.appendChild(resultModal);
+        };
+
+        const closeCulpritModal = () => {
+            showCulpritModal = false;
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        // Timer functionality
+        const startTimer = () => {
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const minutes = Math.floor(timeElapsed / 60);
+                const seconds = timeElapsed % 60;
+                document.getElementById('timer').innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeElapsed >= 1200) { // Stop at 20 minutes
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        };
+
+        document.getElementById('makeAccusationButton').onclick = makeAccusation;
+
+        document.getElementById('investigationTab').onclick = () => {
+            activeTab = 'game';
+            document.getElementById('forensicsSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            renderLocation();
+        };
+
+        document.getElementById('forensicsTab').onclick = () => {
+            activeTab = 'forensics';
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('forensicsSection').classList.remove('hidden');
+            renderForensics();
+        };
+
+        const renderForensics = () => {
+            const evidenceSelection = document.getElementById('evidenceSelection');
+            evidenceSelection.innerHTML = '<h3>Evidence Collection:</h3>';
+            if (inventory.length === 0) {
+                evidenceSelection.innerHTML += '<p>No evidence collected yet. Return to Investigation to gather evidence.</p>';
+            } else {
+                inventory.forEach(clue => {
+                    const evidenceItem = document.createElement('div');
+                    evidenceItem.className = 'evidence-item';
+                    evidenceItem.innerHTML =
+                        `<img src="${clues[clue].image}" alt="${clue}">
+                        <p>${clues[clue].description}</p>`;
+                    evidenceItem.onclick = () => selectEvidence(clue);
+                    evidenceSelection.appendChild(evidenceItem);
+                });
+            }
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const selectEvidence = (evidenceKey) => {
+            selectedEvidence = clues[evidenceKey];
+            renderForensicTools();
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const renderForensicTools = () => {
+            const forensicsDiv = document.getElementById('forensics');
+            forensicsDiv.innerHTML =
+                `<h3>Selected Evidence: ${selectedEvidence.description}</h3>
+                <p>${selectedEvidence.description}</p>
+                <div class="forensics-tools">
+                    <button onclick="startAnalysis('Digital Forensics')">Digital Forensics</button>
+                    <button onclick="startAnalysis('Audio Enhancement')">Audio Enhancement</button>
+                    <button onclick="startAnalysis('Magnification')">Magnification</button>
+                    <button onclick="startAnalysis('UV Light')">UV Light</button>
+                </div>`;
+        };
+
+        const startAnalysis = (tool) => {
+            let result = '';
+            const isReal = selectedEvidence.isFake ? "This evidence is fake." : "This evidence is real.";
+            switch (tool) {
+                case 'Digital Forensics':
+                    if (selectedEvidence.type === 'digital') {
+                        result = selectedEvidence.isFake
+                            ? "Digital forensic analysis reveals inconsistencies: Creation timestamps appear manipulated. High probability this evidence was fabricated."
+                            : "Digital forensic analysis complete: Created at 23:42 from internal network. IP address traces to the mansion's library.";
+                    } else {
+                        result = "No digital metadata available for this evidence type.";
+                    }
+                    break;
+                case 'Audio Enhancement':
+                    if (selectedEvidence.type === 'audio') {
+                        result = "Audio enhancement complete: Background noise reduced. Voice identified as male, attempting to disguise voice. Wind howling audible in background.";
+                    } else {
+                        result = "This evidence type does not contain audio data that can be enhanced.";
+                    }
+                    break;
+                case 'Magnification':
+                    if (['document', 'physical', 'weapon'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "Magnification reveals evidence of manipulation: This evidence shows signs of tampering."
+                            : `Magnification reveals additional details: ${
+                                selectedEvidence.type === 'document'
+                                    ? 'Partial fingerprint detected on the corner.'
+                                    : selectedEvidence.type === 'weapon'
+                                        ? 'Trace blood elements detected despite cleaning attempt.'
+                                        : 'Pattern analysis suggests the evidence was created approximately 48 hours ago.'
+                            }`;
+                    } else {
+                        result = "This evidence type cannot be magnified effectively.";
+                    }
+                    break;
+                case 'UV Light':
+                    if (['document', 'physical'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "UV light reveals invisible markings suggesting document forgery. The ink composition is inconsistent with mansion standard documents."
+                            : "UV light reveals hidden fingerprints and residue not visible to the naked eye.";
+                    } else if (selectedEvidence.type === 'weapon') {
+                        result = "UV light reveals blood residue that wasn't completely cleaned off. Suggests recent use.";
+                    } else {
+                        result = "UV light analysis shows no significant findings for this evidence type.";
+                    }
+                    break;
+                default:
+                    result = "Analysis method not recognized.";
+            }
+            document.getElementById('analysisResults').innerHTML = `<h3>Analysis Result:</h3><p>${result}</p>`;
+        };
+
+        // Interrogation Logic
+        const suspectSelect = document.getElementById('suspectSelect');
+        const questionSelect = document.getElementById('questionSelect');
+        const askQuestionButton = document.getElementById('askQuestionButton');
+
+        suspectSelect.onchange = () => {
+            const selectedSuspect = suspectSelect.value;
+            renderQuestionDropdown(selectedSuspect);
+            answersList = []; // Clear answers when changing suspect
+            renderAnswers(); // Refresh answers display
+            if (!askedQuestions[selectedSuspect]) {
+                askedQuestions[selectedSuspect] = new Set(); // Initialize if not exists
+            }
+        };
+
+        const renderQuestionDropdown = (suspect) => {
+            questionSelect.innerHTML = '<option value="">Select Question</option>'; // Reset options
+            if (suspect) {
+                suspectQuestions[suspect].forEach(question => {
+                    const option = document.createElement('option');
+                    option.value = question;
+                    option.textContent = question;
+                    questionSelect.appendChild(option);
+                });
+                questionSelect.classList.remove('hidden');
+                askQuestionButton.classList.remove('hidden');
+            } else {
+                questionSelect.classList.add('hidden');
+                askQuestionButton.classList.add('hidden');
+            }
+        };
+
+        askQuestionButton.onclick = () => {
+            const selectedQuestion = questionSelect.value;
+            const selectedSuspect = suspectSelect.value;
+            if (selectedQuestion && selectedSuspect) {
+                const response = suspectResponses[selectedSuspect][selectedQuestion];
+                if (!askedQuestions[selectedSuspect].has(selectedQuestion)) { // Check if the question has already been asked
+                    renderChat(selectedQuestion, response);
+                    askedQuestions[selectedSuspect].add(selectedQuestion); // Mark question as asked
+                }
+            }
+        };
+
+        // Initialize the game and show the team name modal
+        showTeamNameModal();
+    </script>
+</body>
+</html>

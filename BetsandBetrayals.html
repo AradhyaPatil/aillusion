@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bets and Betrayals</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1a1a1a; /* Dark background */
+            color: #e0e0e0; /* Light gray */
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); /* Neon cyan shadow */
+            overflow: auto;
+        }
+        h1 {
+            color: #ff007f; /* Neon pink */
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.7);
+            letter-spacing: 2px;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00ffcc; /* Neon cyan */
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333333; /* Dark gray */
+            color: #00ffcc; /* Neon cyan */
+            border: 2px solid #ff007f; /* Neon pink border */
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: #ff007f; /* Neon pink */
+            color: #1a1a1a; /* Dark background */
+        }
+        button:disabled {
+            background-color: #555555; /* Gray */
+            color: #999999; /* Light gray */
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #2c2c2c; /* Dark gray */
+            padding: 30px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #00ffcc; /* Neon cyan border */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); /* Neon cyan shadow */
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #00ffcc; /* Neon cyan border */
+            border-radius: 5px;
+            background-color: #333333; /* Dark gray */
+            color: #00ffcc; /* Neon cyan */
+            font-size: 16px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff007f; /* Neon pink */
+        }
+        .inventory, .evidence, .analysis-results, .forensics {
+            background-color: #2c2c2c; /* Dark gray */
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #00ffcc; /* Neon cyan border */
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Neon cyan shadow */
+        }
+        .inventory h3, .evidence h3, .analysis-results h3, .forensics h3 {
+            color: #00ffcc; /* Neon cyan */
+            margin: 0 0 10px;
+        }
+        .option-button {
+            display: block;
+            margin: 10px 0;
+        }
+        .evidence-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #00ffcc; /* Neon cyan border */
+            border-radius: 5px;
+            background-color: #333333; /* Dark gray */
+            transition: transform 0.2s;
+        }
+        .evidence-item:hover {
+            transform: scale(1.05);
+        }
+        .evidence-item img {
+            width: 100px; /* Increased size */
+            height: auto;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .evidence-item p {
+            margin: 0;
+            color: #e0e0e0; /* Light gray */
+        }
+        .forensics-tools {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .forensics-tools button {
+            width: calc(25% - 10px);
+        }
+        .chat-entry {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #00ffcc; /* Neon cyan border */
+            border-radius: 5px;
+            background-color: #333333; /* Dark gray */
+        }
+        .interrogation-terminal {
+            background-color: #2c2c2c; /* Dark gray */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #00ffcc; /* Neon cyan border */
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Neon cyan shadow */
+            margin-top: 20px;
+        }
+        .interrogation-terminal h3 {
+            color: #00ffcc; /* Neon cyan */
+            margin: 0 0 10px;
+        }
+        .interrogation-terminal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #333333; /* Dark gray */
+            color: #00ffcc; /* Neon cyan */
+            border: 2px solid #00ffcc; /* Neon cyan border */
+            border-radius: 5px;
+        }
+        .interrogation-terminal button {
+            width: 100%;
+        }
+        .answers {
+            background-color: #2c2c2c; /* Dark gray */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #00ffcc; /* Neon cyan border */
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Neon cyan shadow */
+            margin-top: 20px;
+        }
+        .answers h3 {
+            color: #00ffcc; /* Neon cyan */
+            margin: 0 0 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="renderDiv">
+        <h1>Bets and Betrayals</h1>
+        <div id="timer">Timer: 0:00</div>
+        <div>
+            <button id="investigationTab">Investigation</button>
+            <button id="forensicsTab">Forensics Lab</button>
+        </div>
+        <div id="gameSection">
+            <div id="locationDescription"></div>
+            <div id="options"></div>
+            <div class="inventory" id="inventory"></div>
+            <div class="interrogation-terminal">
+                <h3>Interrogation Terminal</h3>
+                <select id="suspectSelect">
+                    <option value="">Select Suspect</option>
+                    <option value="Mr. Arjun Mehta">Mr. Arjun Mehta</option>
+                    <option value="Ms. Priya Sharma">Ms. Priya Sharma</option>
+                    <option value="Mr. Vikram Singh">Mr. Vikram Singh</option>
+                </select>
+                <select id="questionSelect" class="hidden">
+                    <option value="">Select Question</option>
+                </select>
+                <button id="askQuestionButton" class="hidden">Ask Question</button>
+            </div>
+            <div class="answers" id="answers">
+                <h3>Answers to Questions:</h3>
+                <div id="answersList"></div>
+            </div>
+            <button id="makeAccusationButton">Make Accusation</button>
+        </div>
+        <div id="forensicsSection" class="hidden">
+            <h3>Forensics Laboratory</h3>
+            <p>Analyze your collected evidence using advanced AI tools. Select an item to begin analysis.</p>
+            <div id="evidenceSelection"></div>
+            <div class="forensics" id="forensics"></div>
+            <div class="analysis-results" id="analysisResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const realCulprit = "Mr. Arjun Mehta";
+        let currentLocation = 'start';
+        let inventory = [];
+        let activeTab = 'game';
+        let selectedEvidence = null;
+        let analysisResults = {};
+        let showCulpritModal = false;
+        let selectedCulprit = null;
+        let culpritResult = null;
+        let answersList = [];
+        let askedQuestions = {};
+        let timerInterval;
+        let timeElapsed = 0;
+        let teamName = '';
+
+        // Prompt for team name
+        const showTeamNameModal = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Enter Team Name</h2>
+                    <input type="text" id="teamNameInput" placeholder="Team Name" />
+                    <button id="submitTeamNameButton">Submit</button>
+                </div>`;
+            document.body.appendChild(modal);
+
+            document.getElementById('submitTeamNameButton').onclick = () => {
+                teamName = document.getElementById('teamNameInput').value;
+                document.body.removeChild(modal);
+                startTimer(); // Start the timer after team name is submitted
+            };
+        };
+
+        const locations = {
+            start: {
+                description: "During a high-stakes poker game at the Royal Flush Casino, Victor Sharma, a wealthy poker player, is found dead in the back room. The other players are now suspects.",
+                options: [
+                    { text: "Investigate Poker Room", to: "pokerRoom" },
+                    { text: "Check the Bar", to: "bar" },
+                    { text: "Search the Lounge", to: "lounge" },
+                    { text: "Examine the Security Room", to: "securityRoom" }
+                ]
+            },
+            pokerRoom: {
+                description: "The poker room is in chaos. Chips are scattered everywhere, and Victor's last hand is still on the table.",
+                clue: ["security_footage", "murder_weapon"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            bar: {
+                description: "The bar is bustling with activity. A bartender mentions seeing someone leave in a hurry.",
+                clue: ["witness_statement", "drink_receipt"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            lounge: {
+                description: "The lounge is quiet. A note is found on the table, hinting at a secret between two players.",
+                clue: ["secret_note", "personal_diary"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            securityRoom: {
+                description: "The security room is filled with monitors. You find footage of the poker game and a suspicious figure.",
+                clue: ["security_footage", "suspicious_activity"],
+                options: [{ text: "Go Back", to: "start" }]
+            }
+        };
+
+        const clues = {
+            security_footage: {
+                description: "Footage showing the poker game and a figure leaving the table just before the murder.",
+                image: "https://placehold.co/400x300/008080/FFFFFF?text=Security+Footage",
+                type: "digital",
+                isFake: false
+            },
+            murder_weapon: {
+                description: "A broken poker chip found near Victor's body, possibly used in the murder.",
+                image: "https://placehold.co/400x300/FF7F50/FFFFFF?text=Murder+Weapon",
+                type: "weapon",
+                isFake: false
+            },
+            witness_statement: {
+                description: "A statement from the bartender who saw someone leave the poker room in a hurry.",
+                image: "https://placehold.co/400x300/708090/FFFFFF?text=Witness+Statement",
+                type: "document",
+                isFake: false
+            },
+            drink_receipt: {
+                description: "A receipt showing a large order of drinks made just before the murder.",
+                image: "https://placehold.co/400x300/E6E6FA/FFFFFF?text=Drink+Receipt",
+                type: "document",
+                isFake: false
+            },
+            secret_note: {
+                description: "A note hinting at a secret deal between two players.",
+                image: "https://placehold.co/400x300/FFDAB9/FFFFFF?text=Secret+Note",
+                type: "document",
+                isFake: false
+            },
+            personal_diary: {
+                description: "Victor's diary containing entries about his poker strategies and rivalries.",
+                image: "https://placehold.co/400x300/FA8072/FFFFFF?text=Personal+Diary",
+                type: "document",
+                isFake: false
+            },
+            suspicious_activity: {
+                description: "Footage showing a player acting suspiciously during the game.",
+                image: "https://placehold.co/400x300/4682B4/FFFFFF?text=Suspicious+Activity",
+                type: "digital",
+                isFake: false
+            }
+        };
+
+        const suspectQuestions = {
+            'Mr. Arjun Mehta': [
+                "What was your relationship with Victor?",
+                "Did you see anything unusual during the game?",
+                "Where were you when Victor was killed?",
+                "What do you know about the broken poker chip?",
+                "Did you have any arguments with Victor?",
+                "What were you doing before the murder?"
+            ],
+            'Ms. Priya Sharma': [
+                "What was your relationship with Victor?",
+                "Did you notice anything suspicious during the game?",
+                "Where were you when Victor was killed?",
+                "What do you know about the drinks ordered?",
+                "Did you see anyone leave the poker room?",
+                "What were you doing before the murder?"
+            ],
+            'Mr. Vikram Singh': [
+                "What was your relationship with Victor?",
+                "Did you have any disagreements with him?",
+                "Where were you when Victor was killed?",
+                "What do you know about the secret note?",
+                "Did you see anyone acting suspiciously?",
+                "What were you doing before the murder?"
+            ]
+        };
+
+        const suspectResponses = {
+            'Mr. Arjun Mehta': {
+                "What was your relationship with Victor?": "We were rivals at the poker table, always trying to outsmart each other.",
+                "Did you see anything unusual during the game?": "I noticed Victor was acting a bit nervous, but nothing too strange.",
+                "Where were you when Victor was killed?": "I was at the bar, getting a drink.",
+                "What do you know about the broken poker chip?": "I saw it on the floor, but I didn't think much of it.",
+                "Did you have any arguments with Victor?": "We had our disagreements, but nothing that would lead to murder.",
+                "What were you doing before the murder?": "I was playing my hand, focused on the game."
+            },
+            'Ms. Priya Sharma': {
+                "What was your relationship with Victor?": "I respected him as a player, but I wanted to win his money.",
+                "Did you notice anything suspicious during the game?": "I thought I saw someone lurking near the door.",
+                "Where were you when Victor was killed?": "I was in the lounge, chatting with another player.",
+                "What do you know about the drinks ordered?": "I ordered a few drinks for the table, but I didn't see who else was drinking.",
+                "Did you see anyone leave the poker room?": "I didn't see anyone leave, but I heard footsteps.",
+                "What were you doing before the murder?": "I was trying to read Victor's poker face."
+            },
+            'Mr. Vikram Singh': {
+                "What was your relationship with Victor?": "We were friends, but I was also his competitor.",
+                "Did you have any disagreements with him?": "We had a few heated discussions about strategy.",
+                "Where were you when Victor was killed?": "I was in the security room, reviewing the footage.",
+                "What do you know about the secret note?": "I found it in the lounge, but I don't know who wrote it.",
+                "Did you see anyone acting suspiciously?": "I saw Arjun looking around nervously.",
+                "What were you doing before the murder?": "I was placing my bets, trying to win big."
+            }
+        };
+
+        const renderLocation = () => {
+            const location = locations[currentLocation];
+            document.getElementById('locationDescription').innerText = location.description;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            location.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.innerText = option.text;
+                button.onclick = () => {
+                    currentLocation = option.to;
+                    collectClue(option.to);
+                    renderLocation();
+                };
+                optionsDiv.appendChild(button);
+            });
+        };
+
+        const collectClue = (location) => {
+            const locationClues = locations[location].clue;
+            if (locationClues) {
+                const newClues = locationClues.filter(clue => !inventory.includes(clue));
+                if (newClues.length > 0) {
+                    inventory.push(...newClues);
+                    renderInventory();
+                }
+            }
+        };
+
+        const renderInventory = () => {
+            const inventoryDiv = document.getElementById('inventory');
+            inventoryDiv.innerHTML = '<h3>Collected Clues:</h3>';
+            if (inventory.length === 0) {
+                inventoryDiv.innerHTML += '<p>No clues collected yet</p>';
+            } else {
+                const ul = document.createElement('ul');
+                inventory.forEach(clue => {
+                    const li = document.createElement('li');
+                    li.innerText = clues[clue].description;
+                    ul.appendChild(li);
+                });
+                inventoryDiv.appendChild(ul);
+            }
+        };
+
+        const renderChat = (question, response) => {
+            answersList.push(`<strong>Q:</strong> ${question}<br><strong>A:</strong> ${response}`);
+            renderAnswers();
+        };
+
+        const renderAnswers = () => {
+            const answersDiv = document.getElementById('answersList');
+            answersDiv.innerHTML = answersList.join('<br><br>');
+        };
+
+        const makeAccusation = () => {
+            if (inventory.length < 3) {
+                showAccusationWarning();
+            } else {
+                showCulpritModal = true;
+                renderCulpritModal();
+                // Do not stop the timer here
+            }
+        };
+
+        const showAccusationWarning = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Warning</h2>
+                    <p>You need to collect more evidence before making an accusation.</p>
+                    <button onclick="closeAccusationWarning()">Close</button>
+                </div>`;
+            document.body.appendChild(modal);
+        };
+
+        const closeAccusationWarning = () => {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        const renderCulpritModal = () => {
+            if (showCulpritModal) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML =
+                    `<div class="modal-content">
+                        <h2>Select the Culprit</h2>
+                        <p>Based on your investigation, who do you believe is responsible for Victor Sharma's murder?</p>
+                        <button onclick="selectCulprit('Mr. Arjun Mehta')">Mr. Arjun Mehta</button>
+                        <button onclick="selectCulprit('Ms. Priya Sharma')">Ms. Priya Sharma</button>
+                        <button onclick="selectCulprit('Mr. Vikram Singh')">Mr. Vikram Singh</button>
+                        <button onclick="closeCulpritModal()">Cancel</button>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+        };
+
+        const selectCulprit = (culprit) => {
+            selectedCulprit = culprit;
+            stopTimer(); // Stop the timer when a suspect is selected
+            confirmAccusation();
+        };
+
+        const confirmAccusation = () => {
+            if (selectedCulprit) {
+                culpritResult = selectedCulprit === realCulprit ? 'correct' : 'wrong';
+                showCulpritModal = false;
+                renderCulpritResult();
+            }
+        };
+
+        const renderCulpritResult = () => {
+            const resultModal = document.createElement('div');
+            resultModal.className = 'modal';
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const timeTaken = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            resultModal.innerHTML =
+                `<div class="modal-content">
+                    <h2 class="${culpritResult === 'correct' ? 'correct' : 'wrong'}">${culpritResult === 'correct' ? '✓ Correct Identification!' : '✗ Wrong Culprit!'}</h2>
+                    <p>${culpritResult === 'correct' ? `Your deduction is correct! ${selectedCulprit} is indeed guilty of Victor Sharma's murder.` : `Your accusation is incorrect. The evidence suggests that ${selectedCulprit} is not the real culprit.`}</p>
+                    <p>Team Name: ${teamName}</p>
+                    <p>Time Taken: ${timeTaken}</p>
+                    <button onclick="window.location.href='index.html'">Back to Home</button>
+                </div>`;
+            document.body.appendChild(resultModal);
+        };
+
+        const closeCulpritModal = () => {
+            showCulpritModal = false;
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        // Timer functionality
+        const startTimer = () => {
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const minutes = Math.floor(timeElapsed / 60);
+                const seconds = timeElapsed % 60;
+                document.getElementById('timer').innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeElapsed >= 1800) { // Stop at 30 minutes
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        };
+
+        const stopTimer = () => {
+            clearInterval(timerInterval);
+        };
+
+        document.getElementById('makeAccusationButton').onclick = makeAccusation;
+
+        document.getElementById('investigationTab').onclick = () => {
+            activeTab = 'game';
+            document.getElementById('forensicsSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            renderLocation();
+        };
+
+        document.getElementById('forensicsTab').onclick = () => {
+            activeTab = 'forensics';
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('forensicsSection').classList.remove('hidden');
+            renderForensics();
+        };
+
+        const renderForensics = () => {
+            const evidenceSelection = document.getElementById('evidenceSelection');
+            evidenceSelection.innerHTML = '<h3>Evidence Collection:</h3>';
+            if (inventory.length === 0) {
+                evidenceSelection.innerHTML += '<p>No evidence collected yet. Return to Investigation to gather evidence.</p>';
+            } else {
+                inventory.forEach(clue => {
+                    const evidenceItem = document.createElement('div');
+                    evidenceItem.className = 'evidence-item';
+                    evidenceItem.innerHTML =
+                        `<img src="${clues[clue].image}" alt="${clue}">
+                        <p>${clues[clue].description}</p>`;
+                    evidenceItem.onclick = () => selectEvidence(clue);
+                    evidenceSelection.appendChild(evidenceItem);
+                });
+            }
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const selectEvidence = (evidenceKey) => {
+            selectedEvidence = clues[evidenceKey];
+            renderForensicTools();
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const renderForensicTools = () => {
+            const forensicsDiv = document.getElementById('forensics');
+            forensicsDiv.innerHTML =
+                `<h3>Selected Evidence: ${selectedEvidence.description}</h3>
+                <p>${selectedEvidence.description}</p>
+                <div class="forensics-tools">
+                    <button onclick="startAnalysis('Digital Forensics')">Digital Forensics</button>
+                    <button onclick="startAnalysis('Audio Enhancement')">Audio Enhancement</button>
+                    <button onclick="startAnalysis('Magnification')">Magnification</button>
+                    <button onclick="startAnalysis('Fingerprint Analysis')">Fingerprint Analysis</button>
+                </div>`;
+        };
+
+        const startAnalysis = (tool) => {
+            let result = '';
+            switch (tool) {
+                case 'Digital Forensics':
+                    if (selectedEvidence.type === 'digital') {
+                        result = "Digital forensic analysis complete: Captured at 23:42 from internal network. IP address traces to the casino.";
+                    } else {
+                        result = "No digital metadata available for this evidence type.";
+                    }
+                    break;
+                case 'Audio Enhancement':
+                    if (selectedEvidence.type === 'audio') {
+                        result = "Audio enhancement complete: Background noise reduced. Voice identified as male, attempting to disguise voice.";
+                    } else {
+                        result = "This evidence type does not contain audio data that can be enhanced.";
+                    }
+                    break;
+                case 'Magnification':
+                    if (['document', 'physical', 'weapon'].includes(selectedEvidence.type)) {
+                        result = `Magnification reveals additional details: ${
+                            selectedEvidence.type === 'document'
+                                ? 'Partial fingerprint detected on the corner.'
+                                : selectedEvidence.type === 'weapon'
+                                    ? 'Trace blood elements detected despite cleaning attempt.'
+                                    : 'Pattern analysis suggests the evidence was created approximately 48 hours ago.'
+                        }`;
+                    } else {
+                        result = "This evidence type cannot be magnified effectively.";
+                    }
+                    break;
+                case 'Fingerprint Analysis':
+                    if (['document', 'physical', 'weapon'].includes(selectedEvidence.type)) {
+                        result = "Fingerprint analysis complete: A match was found with a known criminal.";
+                    } else {
+                        result = "No fingerprints detected on this evidence type.";
+                    }
+                    break;
+                default:
+                    result = "Analysis method not recognized.";
+            }
+            document.getElementById('analysisResults').innerHTML = `<h3>Analysis Result:</h3><p>${result}</p>`;
+        };
+
+        // Interrogation Logic
+        const suspectSelect = document.getElementById('suspectSelect');
+        const questionSelect = document.getElementById('questionSelect');
+        const askQuestionButton = document.getElementById('askQuestionButton');
+
+        suspectSelect.onchange = () => {
+            const selectedSuspect = suspectSelect.value;
+            renderQuestionDropdown(selectedSuspect);
+            answersList = []; // Clear answers when changing suspect
+            renderAnswers(); // Refresh answers display
+            if (!askedQuestions[selectedSuspect]) {
+                askedQuestions[selectedSuspect] = new Set(); // Initialize if not exists
+            }
+            // Stop the timer when a suspect is selected
+            stopTimer();
+        };
+
+        const renderQuestionDropdown = (suspect) => {
+            questionSelect.innerHTML = '<option value="">Select Question</option>'; // Reset options
+            if (suspect) {
+                suspectQuestions[suspect].forEach(question => {
+                    const option = document.createElement('option');
+                    option.value = question;
+                    option.textContent = question;
+                    questionSelect.appendChild(option);
+                });
+                questionSelect.classList.remove('hidden');
+                askQuestionButton.classList.remove('hidden');
+            } else {
+                questionSelect.classList.add('hidden');
+                askQuestionButton.classList.add('hidden');
+            }
+        };
+
+        askQuestionButton.onclick = () => {
+            const selectedQuestion = questionSelect.value;
+            const selectedSuspect = suspectSelect.value;
+            if (selectedQuestion && selectedSuspect) {
+                const response = suspectResponses[selectedSuspect][selectedQuestion];
+                if (!askedQuestions[selectedSuspect].has(selectedQuestion)) { // Check if the question has already been asked
+                    renderChat(selectedQuestion, response);
+                    askedQuestions[selectedSuspect].add(selectedQuestion); // Mark question as asked
+                }
+            }
+        };
+
+        // Initialize the game and show the team name modal
+        showTeamNameModal();
+    </script>
+</body>
+</html>

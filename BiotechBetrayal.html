@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Biotech Betrayal</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #004d00; /* Dark Green */
+            color: #FFD700; /* Gold */
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Gold shadow */
+            overflow: auto;
+        }
+        h1 {
+            font-family: 'Courier New', monospace; /* Spooky font */
+            color: #FFD700; /* Gold */
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            letter-spacing: 2px;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #FFD700; /* Gold */
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #003300; /* Darker Green */
+            color: #FFD700; /* Gold */
+            border: 2px solid #FFD700; /* Gold */
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: #FFD700; /* Gold */
+            color: #004d00; /* Dark Green */
+        }
+        button:disabled {
+            background-color: #000000;
+            color: #4d0000;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #003300; /* Darker Green */
+            padding: 30px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #FFD700; /* Gold */
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Gold shadow */
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #FFD700; /* Gold */
+            border-radius: 5px;
+            background-color: #003300; /* Darker Green */
+            color: #FFD700; /* Gold */
+            font-size: 16px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff8888;
+        }
+        .inventory, .evidence, .analysis-results, .forensics {
+            background-color: #003300; /* Darker Green */
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #FFD700; /* Gold */
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); /* Gold shadow */
+        }
+        .inventory h3, .evidence h3, .analysis-results h3, .forensics h3 {
+            color: #FFD700; /* Gold */
+            margin: 0 0 10px;
+        }
+        .option-button {
+            display: block;
+            margin: 10px 0;
+        }
+        .evidence-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #FFD700; /* Gold */
+            border-radius: 5px;
+            background-color: #003300; /* Darker Green */
+            transition: transform 0.2s;
+        }
+        .evidence-item:hover {
+            transform: scale(1.05);
+        }
+        .evidence-item img {
+            width: 100px; /* Increased size */
+            height: auto;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .evidence-item p {
+            margin: 0;
+            color: #FFD700; /* Gold */
+        }
+        .forensics-tools {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .forensics-tools button {
+            width: calc(33% - 10px);
+        }
+        .chat-entry {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #FFD700; /* Gold */
+            border-radius: 5px;
+            background-color: #003300; /* Darker Green */
+        }
+        .interrogation-terminal {
+            background-color: #003300; /* Darker Green */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #FFD700; /* Gold */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* White shadow */
+            margin-top: 20px;
+        }
+        .interrogation-terminal h3 {
+            color: #FFD700; /* Gold */
+            margin: 0 0 10px;
+        }
+        .interrogation-terminal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #003300; /* Darker Green */
+            color: #FFD700; /* Gold */
+            border: 2px solid #FFD700; /* Gold */
+            border-radius: 5px;
+        }
+        .interrogation-terminal button {
+            width: 100%;
+        }
+        .answers {
+            background-color: #003300; /* Darker Green */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #FFD700; /* Gold */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* White shadow */
+            margin-top: 20px;
+        }
+        .answers h3 {
+            color: #FFD700; /* Gold */
+            margin: 0 0 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="renderDiv">
+        <h1>The Biotech Betrayal</h1>
+        <div id="timer">Timer: 0:00</div>
+        <div>
+            <button id="investigationTab">Investigation</button>
+            <button id="forensicsTab">Forensics Lab</button>
+        </div>
+        <div id="gameSection">
+            <div id="locationDescription"></div>
+            <div id="options"></div>
+            <div class="inventory" id="inventory"></div>
+            <div class="interrogation-terminal">
+                <h3>Interrogation Terminal</h3>
+                <select id="suspectSelect">
+                    <option value="">Select Suspect</option>
+                    <option value="The Caretaker">Ravi Kumar (The Caretaker)</option>
+                    <option value="Anjali Mehta">Anjali Mehta (The Researcher)</option>
+                    <option value="Priya Sharma">Priya Sharma (The Assistant)</option>
+                </select>
+                <select id="questionSelect" class="hidden">
+                    <option value="">Select Question</option>
+                </select>
+                <button id="askQuestionButton" class="hidden">Ask Question</button>
+            </div>
+            <div class="answers" id="answers">
+                <h3>Answers to Questions:</h3>
+                <div id="answersList"></div>
+            </div>
+            <button id="makeAccusationButton">Make Accusation</button>
+        </div>
+        <div id="forensicsSection" class="hidden">
+            <h3>Digital Forensics Laboratory</h3>
+            <p>Analyze your collected evidence using advanced AI tools. Select an item to begin analysis.</p>
+            <div id="evidenceSelection"></div>
+            <div class="forensics" id="forensics"></div>
+            <div class="analysis-results" id="analysisResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const realCulprit = "Anjali Mehta"; // Updated culprit
+        let currentLocation = 'start';
+        let inventory = [];
+        let activeTab = 'game';
+        let selectedEvidence = null;
+        let analysisResults = {};
+        let showCulpritModal = false;
+        let selectedCulprit = null;
+        let culpritResult = null;
+        let answersList = [];
+        let askedQuestions = {};
+        let timerInterval;
+        let timeElapsed = 0;
+        let teamName = '';
+
+        // Prompt for team name
+        const showTeamNameModal = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Enter Team Name</h2>
+                    <input type="text" id="teamNameInput" placeholder="Team Name" />
+                    <button id="submitTeamNameButton">Submit</button>
+                </div>`;
+            document.body.appendChild(modal);
+
+            document.getElementById('submitTeamNameButton').onclick = () => {
+                teamName = document.getElementById('teamNameInput').value;
+                document.body.removeChild(modal);
+                startTimer(); // Start the timer after team name is submitted
+            };
+        };
+
+        const locations = {
+            start: {
+                description: "A murder has occurred in the biotech lab. The victim is the lead researcher, found dead in the laboratory.",
+                options: [
+                    { text: "Investigate the Laboratory", to: "laboratory" },
+                    { text: "Check the Break Room", to: "break_room" },
+                    { text: "Search the Storage Room", to: "storage_room" },
+                    { text: "Visit the Office", to: "office" }
+                ]
+            },
+            laboratory: {
+                description: "The laboratory is filled with high-tech equipment. Research notes are scattered everywhere.",
+                clue: ["research_notes", "vial_of_poison"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            break_room: {
+                description: "The break room is cozy but feels tense. You find a confidential report and security footage.",
+                clue: ["confidential_report", "security_footage"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            storage_room: {
+                description: "The storage room is dark and cluttered. You find a lab coat with blood and a DNA sample.",
+                clue: ["lab_coat_with_blood", "dna_sample"],
+                options: [{ text: "Go Back", to: "start" }]
+            },
+            office: {
+                description: "The office is filled with papers and files. You find a threatening email and a witness statement.",
+                clue: ["threatening_email", "witness_statement"],
+                options: [{ text: "Go Back", to: "start" }]
+            }
+        };
+
+        const clues = {
+            research_notes: {
+                description: "Detailed research notes on a new biotech project.",
+                image: "https://placehold.co/400x300/4B8B3B/FFFFFF?text=Research+Notes", // Dark Green
+                type: "document",
+                isFake: false
+            },
+            vial_of_poison: {
+                description: "A vial containing a deadly poison.",
+                image: "https://placehold.co/400x300/FF4500/FFFFFF?text=Vial+of+Poison", // Orange Red
+                type: "physical",
+                isFake: false
+            },
+            confidential_report: {
+                description: "A confidential report detailing unethical practices.",
+                image: "https://placehold.co/400x300/1E90FF/FFFFFF?text=Confidential+Report", // Dodger Blue
+                type: "document",
+                isFake: false
+            },
+            security_footage: {
+                description: "Security footage from the lab showing suspicious activity.",
+                image: "https://placehold.co/400x300/B22222/FFFFFF?text=Security+Footage", // Dark Red
+                type: "document",
+                isFake: false
+            },
+            lab_coat_with_blood: {
+                description: "A lab coat with blood stains found in the storage room.",
+                image: "https://placehold.co/400x300/8A2BE2/FFFFFF?text=Lab+Coat+with+Blood", // Dark Violet
+                type: "physical",
+                isFake: false
+            },
+            dna_sample: {
+                description: "A DNA sample that could belong to the murderer.",
+                image: "https://placehold.co/400x300/FFD700/FFFFFF?text=DNA+Sample", // Gold
+                type: "physical",
+                isFake: false
+            },
+            threatening_email: {
+                description: "An email threatening the lead researcher.",
+                image: "https://placehold.co/400x300/4B0082/FFFFFF?text=Threatening+Email", // Indigo
+                type: "document",
+                isFake: false
+            },
+            witness_statement: {
+                description: "A statement from a witness who saw something suspicious.",
+                image: "https://placehold.co/400x300/32CD32/FFFFFF?text=Witness+Statement", // Lime Green
+                type: "document",
+                isFake: false
+            }
+        };
+
+        const suspectQuestions = {
+            'The Caretaker': [
+                "What do you know about the history of this lab?",
+                "Did you see anyone suspicious last night?",
+                "What do you think happened to the lead researcher?",
+                "Have you noticed anything strange recently?",
+                "What can you tell me about the lab's security?"
+            ],
+            'Ravi Kumar': [ // Updated name
+                "Why did you return to the lab after all these years?",
+                "What do you know about the unethical practices?",
+                "Did you have a conflict with the lead researcher?",
+                "What do you think about the caretaker?",
+                "Have you seen anything unusual in the lab?"
+            ],
+            'Anjali Mehta': [ // Updated name
+                "What brought you to this lab?",
+                "Have you found any evidence of foul play?",
+                "What do you think about the lab's security?",
+                "Did you see anyone else here last night?",
+                "What do you know about the lead researcher?"
+            ]
+        };
+
+        const suspectResponses = {
+            'The Caretaker': {
+                "What do you know about the history of this lab?": "I’ve been taking care of this place for years. There are secrets hidden in every corner.",
+                "Did you see anyone suspicious last night?": "I heard noises, but I thought it was just the wind.",
+                "What do you think happened to the lead researcher?": "He was a brilliant scientist, but he made some dangerous enemies.",
+                "Have you noticed anything strange recently?": "The equipment has been malfunctioning more often than usual.",
+                "What can you tell me about the lab's security?": "We have cameras, but they don't cover every angle."
+            },
+            'Ravi Kumar': {
+                "Why did you return to the lab after all these years?": "I wanted to reclaim my family's legacy in biotech, but I fear something dark lurks here.",
+                "What do you know about the unethical practices?": "There have been rumors of experiments that went too far.",
+                "Did you have a conflict with the lead researcher?": "We disagreed on the direction of the research. I wanted to focus on ethics.",
+                "What do you think about the caretaker?": "He seems to know more than he lets on. I don't fully trust him.",
+                "Have you seen anything unusual in the lab?": "I’ve seen shadows moving in the corners of my eyes."
+            },
+            'Anjali Mehta': {
+                "What brought you to this lab?": "I’m here to investigate the paranormal activity surrounding the lab.",
+                "Have you found any evidence of foul play?": "Yes, I’ve captured strange sounds and shadows on my equipment.",
+                "What do you think about the lab's security?": "It's tight, but there are always ways to bypass it.",
+                "Did you see anyone else here last night?": "I thought I saw someone in the storage room, but it was too dark to tell.",
+                "What do you know about the lead researcher?": "He was known for his groundbreaking work, but also for his controversial methods."
+            }
+        };
+
+        const renderLocation = () => {
+            const location = locations[currentLocation];
+            document.getElementById('locationDescription').innerText = location.description;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            location.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.innerText = option.text;
+                button.onclick = () => {
+                    currentLocation = option.to;
+                    collectClue(option.to);
+                    renderLocation();
+                };
+                optionsDiv.appendChild(button);
+            });
+        };
+
+        const collectClue = (location) => {
+            const locationClues = locations[location].clue;
+            if (locationClues) {
+                const newClues = locationClues.filter(clue => !inventory.includes(clue));
+                if (newClues.length > 0) {
+                    inventory.push(...newClues);
+                    renderInventory();
+                }
+            }
+        };
+
+        const renderInventory = () => {
+            const inventoryDiv = document.getElementById('inventory');
+            inventoryDiv.innerHTML = '<h3>Collected Clues:</h3>';
+            if (inventory.length === 0) {
+                inventoryDiv.innerHTML += '<p>No clues collected yet</p>';
+            } else {
+                const ul = document.createElement('ul');
+                inventory.forEach(clue => {
+                    const li = document.createElement('li');
+                    li.innerText = clues[clue].description;
+                    ul.appendChild(li);
+                });
+                inventoryDiv.appendChild(ul);
+            }
+        };
+
+        const renderChat = (question, response) => {
+            answersList.push(`<strong>Q:</strong> ${question}<br><strong>A:</strong> ${response}`);
+            renderAnswers();
+        };
+
+        const renderAnswers = () => {
+            const answersDiv = document.getElementById('answersList');
+            answersDiv.innerHTML = answersList.join('<br><br>');
+        };
+
+        const makeAccusation = () => {
+            if (inventory.length < 3) {
+                showAccusationWarning();
+            } else {
+                showCulpritModal = true;
+                renderCulpritModal();
+            }
+        };
+
+        const showAccusationWarning = () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML =
+                `<div class="modal-content">
+                    <h2>Warning</h2>
+                    <p>You need to collect more evidence before making an accusation.</p>
+                    <button onclick="closeAccusationWarning()">Close</button>
+                </div>`;
+            document.body.appendChild(modal);
+        };
+
+        const closeAccusationWarning = () => {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        const renderCulpritModal = () => {
+            if (showCulpritModal) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML =
+                    `<div class="modal-content">
+                        <h2>Select the Culprit</h2>
+                        <p>Based on your investigation, who do you believe is responsible for the lead researcher's death?</p>
+                        <button onclick="selectCulprit('The Caretaker')">Ravi Kumar (The Caretaker)</button> <!-- Updated name -->
+                        <button onclick="selectCulprit('Anjali Mehta')">Anjali Mehta (The Researcher)</button> <!-- Updated name -->
+                        <button onclick="selectCulprit('Priya Sharma')">Priya Sharma (The Assistant)</button> <!-- Updated name -->
+                        <button onclick="closeCulpritModal()">Cancel</button>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+        };
+
+        const selectCulprit = (culprit) => {
+            selectedCulprit = culprit;
+            clearInterval(timerInterval); // Stop the timer when a suspect is selected
+            confirmAccusation();
+        };
+
+        const confirmAccusation = () => {
+            if (selectedCulprit) {
+                culpritResult = selectedCulprit === realCulprit ? 'correct' : 'wrong';
+                showCulpritModal = false;
+                renderCulpritResult();
+            }
+        };
+
+        const renderCulpritResult = () => {
+            const resultModal = document.createElement('div');
+            resultModal.className = 'modal';
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const timeTaken = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            resultModal.innerHTML =
+                `<div class="modal-content">
+                    <h2 class="${culpritResult === 'correct' ? 'correct' : 'wrong'}">${culpritResult === 'correct' ? '✓ Correct Identification!' : '✗ Wrong Culprit!'}</h2>
+                    <p>${culpritResult === 'correct' ? `Your deduction is correct! ${selectedCulprit} is indeed guilty of the lead researcher's murder.` : `Your accusation is incorrect. The evidence suggests that ${selectedCulprit} is not the real culprit. `}</p>
+                    <p>Team Name: ${teamName}</p>
+                    <p>Time Taken: ${timeTaken}</p>
+                     <button onclick="window.location.href='index.html'">Back to Home</button>
+                </div>`;
+            document.body.appendChild(resultModal);
+        };
+
+        const closeCulpritModal = () => {
+            showCulpritModal = false;
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        // Timer functionality
+        const startTimer = () => {
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const minutes = Math.floor(timeElapsed / 60);
+                const seconds = timeElapsed % 60;
+                document.getElementById('timer').innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeElapsed >= 1200) { // Stop at 20 minutes
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        };
+
+        document.getElementById('makeAccusationButton').onclick = makeAccusation;
+
+        document.getElementById('investigationTab').onclick = () => {
+            activeTab = 'game';
+            document.getElementById('forensicsSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            renderLocation();
+        };
+
+        document.getElementById('forensicsTab').onclick = () => {
+            activeTab = 'forensics';
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('forensicsSection').classList.remove('hidden');
+            renderForensics();
+        };
+
+        const renderForensics = () => {
+            const evidenceSelection = document.getElementById('evidenceSelection');
+            evidenceSelection.innerHTML = '<h3>Evidence Collection:</h3>';
+            if (inventory.length === 0) {
+                evidenceSelection.innerHTML += '<p>No evidence collected yet. Return to Investigation to gather evidence.</p>';
+            } else {
+                inventory.forEach(clue => {
+                    const evidenceItem = document.createElement('div');
+                    evidenceItem.className = 'evidence-item';
+                    evidenceItem.innerHTML =
+                        `<img src="${clues[clue].image}" alt="${clue}">
+                        <p>${clues[clue].description}</p>`;
+                    evidenceItem.onclick = () => selectEvidence(clue);
+                    evidenceSelection.appendChild(evidenceItem);
+                });
+            }
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const selectEvidence = (evidenceKey) => {
+            selectedEvidence = clues[evidenceKey];
+            renderForensicTools();
+            document.getElementById('analysisResults').innerHTML = ''; // Clear previous analysis results
+        };
+
+        const renderForensicTools = () => {
+            const forensicsDiv = document.getElementById('forensics');
+            forensicsDiv.innerHTML =
+                `<h3>Selected Evidence: ${selectedEvidence.description}</h3>
+                <p>${selectedEvidence.description}</p>
+                <div class="forensics-tools">
+                    <button onclick="startAnalysis('Digital Forensics')">Digital Forensics</button>
+                    <button onclick="startAnalysis('Audio Enhancement')">Audio Enhancement</button>
+                    <button onclick="startAnalysis('Magnification')">Magnification</button>
+                    <button onclick="startAnalysis('UV Light')">UV Light</button>
+                </div>`;
+        };
+
+        const startAnalysis = (tool) => {
+            let result = '';
+            const isReal = selectedEvidence.isFake ? "This evidence is fake." : "This evidence is real.";
+            switch (tool) {
+                case 'Digital Forensics':
+                    if (selectedEvidence.type === 'digital') {
+                        result = selectedEvidence.isFake
+                            ? "Digital forensic analysis reveals inconsistencies: Creation timestamps appear manipulated. High probability this evidence was fabricated."
+                            : "Digital forensic analysis complete: Created at 23:42 from internal network. IP address traces to the biotech lab.";
+                    } else {
+                        result = "No digital metadata available for this evidence type.";
+                    }
+                    break;
+                case 'Audio Enhancement':
+                    if (selectedEvidence.type === 'audio') {
+                        result = "Audio enhancement complete: Background noise reduced. Voice identified as male, attempting to disguise voice. Lab equipment noise audible in background.";
+                    } else {
+                        result = "This evidence type does not contain audio data that can be enhanced.";
+                    }
+                    break;
+                case 'Magnification':
+                    if (['document', 'physical', 'weapon'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "Magnification reveals evidence of manipulation: This evidence shows signs of tampering."
+                            : `Magnification reveals additional details: ${
+                                selectedEvidence.type === 'document'
+                                    ? 'Partial fingerprint detected on the corner.'
+                                    : selectedEvidence.type === 'weapon'
+                                        ? 'Trace blood elements detected despite cleaning attempt.'
+                                        : 'Pattern analysis suggests the evidence was created approximately 48 hours ago.'
+                            }`;
+                    } else {
+                        result = "This evidence type cannot be magnified effectively.";
+                    }
+                    break;
+                case 'UV Light':
+                    if (['document', 'physical'].includes(selectedEvidence.type)) {
+                        result = selectedEvidence.isFake
+                            ? "UV light reveals invisible markings suggesting document forgery. The ink composition is inconsistent with lab standard documents."
+                            : "UV light reveals hidden fingerprints and residue not visible to the naked eye.";
+                    } else if (selectedEvidence.type === 'weapon') {
+                        result = "UV light reveals blood residue that wasn't completely cleaned off. Suggests recent use.";
+                    } else {
+                        result = "UV light analysis shows no significant findings for this evidence type.";
+                    }
+                    break;
+                default:
+                    result = "Analysis method not recognized.";
+            }
+            document.getElementById('analysisResults').innerHTML = `<h3>Analysis Result:</h3><p>${result}</p>`;
+        };
+
+        // Interrogation Logic
+        const suspectSelect = document.getElementById('suspectSelect');
+        const questionSelect = document.getElementById('questionSelect');
+        const askQuestionButton = document.getElementById('askQuestionButton');
+
+        suspectSelect.onchange = () => {
+            const selectedSuspect = suspectSelect.value;
+            renderQuestionDropdown(selectedSuspect);
+            answersList = []; // Clear answers when changing suspect
+            renderAnswers(); // Refresh answers display
+            if (!askedQuestions[selectedSuspect]) {
+                askedQuestions[selectedSuspect] = new Set(); // Initialize if not exists
+            }
+        };
+
+        const renderQuestionDropdown = (suspect) => {
+            questionSelect.innerHTML = '<option value="">Select Question</option>'; // Reset options
+            if (suspect) {
+                suspectQuestions[suspect].forEach(question => {
+                    const option = document.createElement('option');
+                    option.value = question;
+                    option.textContent = question;
+                    questionSelect.appendChild(option);
+                });
+                questionSelect.classList.remove('hidden');
+                askQuestionButton.classList.remove('hidden');
+            } else {
+                questionSelect.classList.add('hidden');
+                askQuestionButton.classList.add('hidden');
+            }
+        };
+
+        askQuestionButton.onclick = () => {
+            const selectedQuestion = questionSelect.value;
+            const selectedSuspect = suspectSelect.value;
+            if (selectedQuestion && selectedSuspect) {
+                const response = suspectResponses[selectedSuspect][selectedQuestion];
+                if (!askedQuestions[selectedSuspect].has(selectedQuestion)) { // Check if the question has already been asked
+                    renderChat(selectedQuestion, response);
+                    askedQuestions[selectedSuspect].add(selectedQuestion); // Mark question as asked
+                }
+            }
+        };
+
+        // Initialize the game and show the team name modal
+        showTeamNameModal();
+    </script>
+</body>
+</html>
