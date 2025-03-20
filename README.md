@@ -27,6 +27,9 @@ Teams will be judged based on:
 ## 🎉 Prizes & Recognition  
 Exciting **prizes & certificates** await the top-performing teams! 🏆  
 
+## 📢 Credits & Acknowledgments
+A huge thanks to Shardul Gurav(shardulgurav126@gmail.com) for contributing to the design and development of the Home Page (Story Selection) for AI-LLUSION. Your support and efforts helped enhance the user experience and overall event immersion! 🎭🔍
+
 ## 📸 Event Highlights (To be updated)  
 Check out event snapshots and highlights soon!  
 
